@@ -57,9 +57,11 @@ Now browse to the app at `http://localhost:8000/examples/index.html`.
 
 To use render and mcc grid component, set up a grid configuration and pass in a list of data items:
 
+```
     <mcc-grid
         data-config="gridConfig"
         data-grid-data="gridData"></mcc-grid>
+```
 
 It is assumed that your data is a list of JSON objects. The following section explains the grid configuration options.
 
@@ -69,19 +71,22 @@ It is assumed that your data is a list of JSON objects. The following section ex
 
 To configure your grid, in your applications controller define a bindable grid configuration object on scope or controller as follows:
 
+```
     $scope.AppCtrl.gridConfig = {
       columns: [..],
       headers: {...},
       rows: {...},
       table: {...}
     }
+```
+
 <style type="text/css">
   td {
     vertical-align: top;
   }
 </style>
-<table>
 
+<table>
   <thead>
     <tr>
       <th width="100">Config Id</th>
@@ -115,7 +120,7 @@ To configure your grid, in your applications controller define a bindable grid c
 
 ####Mcc Grid Column definition <a name="col-definition"></a>
 Example usage:
-<pre>
+```
       $scope.AppCtrl.gridConfig.columns[
         {
           css: {
@@ -127,7 +132,7 @@ Example usage:
           title: 'Name'
         }
       ];
-</pre>
+```
 
 <table>
   <thead>
@@ -143,12 +148,12 @@ Example usage:
       <td>Object</td>
       <td>
           <p>A configuration for custom css classes for the column and header as follows:</p>
-          <pre>
+          ```
           css: {
             header: Array.&lt;(String),
             cell: Array.&lt;(String)
           }
-          </pre>
+          ```
           <p>css.header - adds the specified list of custom css classes to this header TH</p>
           <p>css.cell - adds the specified list of css classes to both the header TH and body TD</p>
       </td>
@@ -180,11 +185,11 @@ Example usage:
 
 ####Mcc Grid header configuration options <a name="header-definition"></a>
 Example usage:
-<pre>
+```
     $scope.AppCtrl.gridConfig.header: {
         isSticky: false
     };
-</pre>
+```
 
 <table>
   <thead>
@@ -207,7 +212,7 @@ Example usage:
 
 ####Mcc Grid row configuration options <a name="row-definition"></a>
 Example usage:
-<pre>
+```
     $scope.AppCtrl.gridConfig.rows: {
       canEdit: function(Row) {
         return $scope.canIDeleteThis(Row);
@@ -216,7 +221,7 @@ Example usage:
         $scope.deleteItemFromController(Row)
       }
     };
-</pre>
+```
 
 <table>
   <thead>
@@ -246,7 +251,7 @@ Example usage:
 
 ####Mcc Grid table configuration options <a name="table-definition"></a>
 Example usage:
-<pre>
+```
     $scope.AppCtrl.gridConfig.table = {
       autoHeightResize: false,
       autoHeightResizeWithoutWindowScroll: true,
@@ -254,7 +259,7 @@ Example usage:
       canScrollY: true,
       bodyHeight: 100
     }
-</pre>
+```
 
 <table>
   <thead>
