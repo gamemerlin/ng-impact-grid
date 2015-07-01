@@ -1,0 +1,14 @@
+<div class="mcc-grid-body-container" ng-style="{'height': BodyCtrl.getHeight()}" ng-class="{'can-scroll-x': BodyCtrl.canScrollX(), 'can-scroll-y': BodyCtrl.canScrollY()}">
+  <table>
+    <tbody>
+      <tr ng-repeat="row in GridCtrl.getRows()">
+        <td class="mcc-grid-td" ng-repeat="cell in row.getCells()">
+          {{cell.value}}
+        </td>
+        <td class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()">
+          <a href="" class="mcc-delete-row-btn" ng-click="row.deleteSelf(row)" ng-class="{'delete-in-progress': row.deleteInProgress }"></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

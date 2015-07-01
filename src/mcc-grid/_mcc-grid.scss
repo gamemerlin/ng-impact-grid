@@ -1,0 +1,63 @@
+.mcc-grid-container {
+  font-size: 12px;
+
+  .can-scroll-x {
+    overflow-x: auto;
+  }
+
+  .can-scroll-y {
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  thead th {
+    padding: 8px;
+  }
+
+  tr {
+    &:hover {
+      background: #f5f5f5;
+
+      td {
+        background: #ecf1ff;
+      }
+
+      th {
+        background: #fff;
+      }
+    }
+  }
+
+  td {
+    border-bottom: 1px solid #dad5cf;
+    padding: 8px;
+
+    &.mcc-delete-cell {
+      text-align: right;
+
+      .mcc-delete-row-btn {
+        color: #000;
+        display: inline-block;
+        font-family: FontAwesome;
+        text-decoration: none;
+
+        &:before {
+          content: "\f057";
+        }
+
+        &:hover:before {
+          color: red;
+        }
+
+        &.delete-in-progress:before {
+          color: #000;
+          content: "\f110";
+          animation: fa-spin 2s infinite linear;
+        }
+      }
+    }
+  }
+}

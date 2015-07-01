@@ -1,0 +1,33 @@
+.mcc-grid-container {
+  border: 1px solid #ddd; }
+  .mcc-grid-container .can-scroll-x {
+    overflow-x: auto; }
+  .mcc-grid-container .can-scroll-y {
+    overflow-y: auto; }
+  .mcc-grid-container table {
+    width: 100%; }
+  .mcc-grid-container thead th {
+    background: #f5f4f2;
+    padding: 8px; }
+  .mcc-grid-container tr:hover {
+    background: #f5f5f5; }
+    .mcc-grid-container tr:hover td {
+      background: #ecf1ff; }
+  .mcc-grid-container td {
+    border-bottom: 1px solid #dad5cf;
+    padding: 8px; }
+    .mcc-grid-container td.mcc-delete-cell {
+      text-align: right; }
+      .mcc-grid-container td.mcc-delete-cell .mcc-delete-row-btn {
+        color: #000;
+        display: inline-block;
+        font-family: FontAwesome;
+        text-decoration: none; }
+        .mcc-grid-container td.mcc-delete-cell .mcc-delete-row-btn:before {
+          content: "\f057"; }
+        .mcc-grid-container td.mcc-delete-cell .mcc-delete-row-btn:hover:before {
+          color: red; }
+        .mcc-grid-container td.mcc-delete-cell .mcc-delete-row-btn.delete-in-progress:before {
+          color: #000;
+          content: "\f110";
+          animation: fa-spin 2s infinite linear; }

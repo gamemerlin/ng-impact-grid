@@ -1,0 +1,18 @@
+<!-- there is a bug in this version of angular that makes
+     impossible to use TABLE, TH, TR, TD as directive elements
+     to be replace in templates :( -->
+<thead>
+  <tr>
+      <th ng-repeat="column in HeaderCtrl.firstHeaderRow"
+          class="mcc-grid-th"
+          data-column="column">
+        {{ column.title }}
+      </th>
+      <th class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()" rowspan="{{ HeaderCtrl.getTotalRowSpan() }}">&nbsp;</th>
+  </tr>
+  <tr ng-if="HeaderCtrl.hasGroupedColumns">
+     <th class="mcc-grid-th"
+         ng-repeat="column in HeaderCtrl.secondHeaderRow"
+         data-column="column">{{ column.title }}</th>
+  </tr>
+</thead>
