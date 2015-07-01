@@ -53,4 +53,4 @@ npm start
 
 Now browse to the app at `http://localhost:8000/examples/index.html`.
 
-Please refer to the [grid api docs](tree/master/src/mcc-grid) for more details on how to use the grid.
+Please refer to the [grid api docs](//github.com/gamemerlin/ng-impact-grid/tree/master/src/mcc-grid) for more details on how to use the grid.
