@@ -38,23 +38,23 @@ mccGridModule.directive('mccGridBody', function() {
    * @returns {boolean} Whether this grid body can scroll on the X axis.
    */
   MccGridBodyController.prototype.canScrollX = function() {
-    return this.getTableConfig().canScrollX;
+    return this.getTableConfig() && this.getTableConfig().canScrollX;
   };
 
   /**
    * @returns {boolean} Whether this grid body can scroll on the Y axis.
    */
   MccGridBodyController.prototype.canScrollY = function() {
-    return this.getTableConfig().canScrollY;
+    return this.getTableConfig() && this.getTableConfig().canScrollY;
   };
 
   MccGridBodyController.prototype.getHeight = function() {
-    return this.getTableConfig().bodyHeight;
+    return this.getTableConfig() && this.getTableConfig().bodyHeight;
   };
 
   MccGridBodyController.prototype.getAutoResize = function() {
-    return this.getTableConfig().autoHeightResize ||
-        this.getTableConfig().autoHeightResizeWithoutWindowScroll;
+    return this.getTableConfig() && (this.getTableConfig().autoHeightResize ||
+        this.getTableConfig().autoHeightResizeWithoutWindowScroll);
   };
 
   /**

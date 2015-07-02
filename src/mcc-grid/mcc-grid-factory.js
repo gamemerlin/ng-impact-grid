@@ -44,12 +44,12 @@ mccGridModule.factory('RowModel', ['CellModel', function(Cell){
         }
 
         // Passing canEdit from the application to the model.
-        if (rowConfig.canEdit) {
+        if (rowConfig && rowConfig.canEdit) {
             this.canEdit = rowConfig.canEdit;
         }
 
         // Passing delete handler from the application to the model.
-        if (rowConfig.deleteHandler) {
+        if (rowConfig && rowConfig.deleteHandler) {
             this.deleteSelf = rowConfig.deleteHandler;
         }
     }

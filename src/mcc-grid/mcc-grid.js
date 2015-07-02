@@ -30,8 +30,7 @@ mccGridModule.directive('mccGrid', function () {
     $scope.$watch(
         function () {
           var canRenderRows = $scope.gridData && $scope.gridData.length &&
-              $scope.GridCtrl.columnOrdering_.length &&
-              $scope.config && $scope.config.rows;
+              $scope.GridCtrl.columnOrdering_.length && $scope.config;
 
           if (canRenderRows) {
             return $scope.gridData.length;
@@ -160,8 +159,8 @@ mccGridModule.directive('mccGrid', function () {
   MccGridController.prototype.shouldShowRowDelete = function () {
     var rowConfig = this.getConfig().rows;
 
-    return Boolean(rowConfig.canEdit && rowConfig.canEdit() &&
-        rowConfig.deleteHandler);
+    return Boolean(rowConfig && rowConfig.canEdit &&
+        rowConfig.canEdit() && rowConfig.deleteHandler);
   };
 
   return {

@@ -3,13 +3,28 @@ angular.module('mcc.directives.grid', []);
 
 // Grid features
 /**
- * Make name space mcc-
- * fixed headers
+ *
+ * add pagination
+ *  remote pagination
+ *  remote sorting
+ *  remote render
+ *
+ *
+ * custom cell render
+ *  column.template
+ *  column.templateUrl
+ *
+ *
+ * Tree data
+ * tree: {
+ *  childGetters: [(string|function)]
+ * }
+ *
  * highlight column group
  *
  * row selection handler
  * row select
- * custom cell render
+
  * sort
  * tree structure. Assume we have parent child relation already?
  * add class based on cell data condition
@@ -113,7 +128,6 @@ mccGridModule.directive('mccGridBody', function() {
         // to guarantee this will resize after all other dom events.
         var me = this;
         this.timeout_(function() {
-          console.log('angular.element(me.window_) ', angular.element(me.window_))
           angular.element(me.window_).triggerHandler('resize');
         });
   };
