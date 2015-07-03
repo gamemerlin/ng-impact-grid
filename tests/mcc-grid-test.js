@@ -127,19 +127,20 @@ describe('Grid layout', function() {
       },
       {
         css: {
-          header: ['header-1'],
-          cell: ['col-1']
-        },
-        title: 'Personal Info'
-      },
-      {
-        css: {
           header: ['header-2'],
           cell: ['col-3']
         },
         field: 'telephone',
         isSortable: true,
         title: 'Phone'
+      },
+      {
+        css: {
+          header: ['header-2'],
+          cell: ['col-2']
+        },
+        field: 'zip',
+        title: 'Zip'
       }
     ]
   };
@@ -159,8 +160,19 @@ describe('Grid layout', function() {
       var element = $compile(HTML_TEMPLATE)($scope);
       $scope.$digest();
 
-      expect($('tbody tr', element).length).toBe(10);
-    });
+      var rowsElm = $('tbody tr', element);
+      expect(rowsElm.length).toBe(10);
 
+      for (var i=0, length = MOCK_DATA.length; i<length; i++) {
+        var data = MOCK_DATA[i],
+            row = rowsElm.eq(i);
+        expect($('td', row).eq(0).text().trim()).
+            toBe(data.name);
+        expect($('td', row).eq(1).text().trim()).
+            toBe(data.telephone);
+        expect($('td', row).eq(2).text().trim()).
+            toBe(data.zip);
+      }
+    });
   });
 });
