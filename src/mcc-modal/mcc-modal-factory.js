@@ -33,7 +33,7 @@ function BackdropService($rootScope, $document, $compile) {
  */
 BackdropService.prototype.createBackdrop = function() {
   var BACKDROP_HTML =
-      '<div ng-class="{\'modal-backdrop fade in\': ctrl.isVisible()}"></div>';
+      '<div class="modal-backdrop" ng-class="{\'fade in\': ctrl.isVisible()}"></div>';
 
   var element = this.compile_(BACKDROP_HTML)(this.scope_);
 
@@ -182,7 +182,7 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
    */
   DialogConstructor.prototype.compileFooter_ = function() {
     var element = angular.element(
-        '<div class="modal-footer" ng-if="modalCtrl.getButtons()">' +
+        '<div class="modal-footer" ng-if="modalCtrl.hasButtons()">' +
         ' <button type="button" class="btn" ' +
         '     ng-repeat="button in modalCtrl.getButtons()" ' +
         '     ng-click="button.clickHandler()" ' +
@@ -199,6 +199,10 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 
   DialogConstructor.prototype.getButtons = function() {
     return this.config_.buttons;
+  };
+
+  DialogConstructor.prototype.hasButtons = function() {
+    return this.config_.buttons && this.config_.buttons.length;
   };
 
   DialogConstructor.prototype.getDialogButtons = function() {
