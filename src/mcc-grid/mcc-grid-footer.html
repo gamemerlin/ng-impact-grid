@@ -1,0 +1,31 @@
+<div class="mcc-grid-pagination">
+  <div class="clearfix"">
+    <div class="total-results">
+      <b class="ng-binding">19</b><span class="ng-binding"> Total Result(s)</span>
+    </div>
+    <div class="per-page">
+      <span class="ng-binding">Per page</span>
+      <ul>
+        <!-- ngRepeat: pageLength in config.perPageSizes -->
+        <li ng-repeat="pageLength in config.perPageSizes" class="ng-scope">
+          <a href="#" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="getPage({params: config.perPageParams[pageLength]})" class="ng-binding selected">10</a>
+        </li>
+        <!-- end ngRepeat: pageLength in config.perPageSizes -->
+        <li ng-repeat="pageLength in config.perPageSizes" class="ng-scope">
+          <a href="#" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="getPage({params: config.perPageParams[pageLength]})" class="ng-binding">25</a>
+        </li>
+        <!-- end ngRepeat: pageLength in config.perPageSizes -->
+        <li ng-repeat="pageLength in config.perPageSizes" class="ng-scope">
+          <a href="#" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="getPage({params: config.perPageParams[pageLength]})" class="ng-binding">50</a>
+        </li><!-- end ngRepeat: pageLength in config.perPageSizes --><li ng-repeat="pageLength in config.perPageSizes" class="ng-scope"><a href="#" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="getPage({params: config.perPageParams[pageLength]})" class="ng-binding">100</a></li><!-- end ngRepeat: pageLength in config.perPageSizes -->
+      </ul>
+    </div>
+    <ul class="controls">
+      <li><a ng-click="clickForPage(config.firstPage, $event)" class="first disabled" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-double-left"></i></a></li>
+      <li><a ng-click="clickForPage(config.prevPage, $event)" class="previous disabled" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-left"></i></a></li>
+      <li class="counter"><form ng-submit="inputPage()" class="ng-pristine ng-valid"><input ng-model="config.inputPage" maxlength="1" ng-disabled="isOnePage()" ng-blur="resetInput()" autocomplete="off" class="ng-pristine ng-valid"> <span class="ng-binding">of</span> <span class="total-pages ng-binding" ng-bind="config.totalPages">2</span></form></li>
+      <li><a ng-click="clickForPage(config.nextPage, $event)" class="next" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-right"></i></a></li>
+      <li><a ng-click="clickForPage(config.lastPage, $event)" class="last" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-double-right"></i></a></li>
+    </ul>
+</div>
+</div>

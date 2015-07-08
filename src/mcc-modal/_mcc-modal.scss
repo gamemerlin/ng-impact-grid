@@ -1,0 +1,147 @@
+// Styles from bootstrap modal.
+.modal-open {
+  overflow: hidden;
+}
+
+.modal {
+  display: none;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+
+  &.fade .modal-dialog {
+    -webkit-transform: translate(0, -25%);
+    -ms-transform: translate(0, -25%);
+    -o-transform: translate(0, -25%);
+    transform: translate(0, -25%);
+    -webkit-transition: -webkit-transform 0.3s ease-out;
+    -moz-transition: -moz-transform 0.3s ease-out;
+    -o-transition: -o-transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
+  }
+
+  &.in .modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+}
+
+.modal-dialog {
+  position: relative;
+  width: 600px;
+  margin: 30px auto;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  background-clip: padding-box;
+  outline: 0;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: #000;
+
+  &.fade {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  &.in {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+  }
+}
+
+
+.modal-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+  min-height: 16.42857px;
+}
+
+.modal-header .close {
+  margin-top: -2px;
+}
+
+.modal-title {
+  margin: 0;
+  line-height: 1.42857;
+}
+
+.modal-body {
+  position: relative;
+  padding: 15px;
+}
+
+.modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+
+  .btn + .btn {
+    margin-left: 5px;
+    margin-bottom: 0;
+  }
+  .btn-group .btn + .btn {
+    margin-left: -1px;
+  }
+  .btn-block + .btn-block {
+    margin-left: 0;
+  }
+}
+
+.modal-backdrop {
+  height: 100%;
+}
+
+// Override bootstrap modal styles.
+
+.mcc-modal,
+.modal-backdrop {
+  display: block;
+  visibility: hidden;
+
+  // Override boostrap modal styles to animate visibility for closing
+  // the modal too.
+  -webkit-transition: visibility 0s linear 0.25s, opacity 0.25s linear;
+  -o-transition: visibility 0s linear 0.25s, opacity 0.25s linear;
+  transition: visibility 0s linear 0.25s, opacity 0.25s linear;
+
+  &.fade.in {
+    visibility: visible;
+
+    // Override boostrap modal styles to animate visibility for closing
+    // the modal too.
+    -webkit-transition: visibility 0s linear 0s, opacity 0.25s linear;
+    -o-transition: visibility 0s linear 0s, opacity 0.25s linear;
+    transition: visibility 0s linear 0s, opacity 0.25s linear;
+  }
+
+}

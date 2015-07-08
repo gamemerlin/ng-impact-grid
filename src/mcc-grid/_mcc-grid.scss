@@ -41,7 +41,7 @@
       .mcc-delete-row-btn {
         color: #000;
         display: inline-block;
-        font-family: FontAwesome;
+        font: normal normal normal 14px/1px FontAwesome;
         text-decoration: none;
 
         &:before {
@@ -56,6 +56,53 @@
           color: #000;
           content: "\f110";
           animation: fa-spin 2s infinite linear;
+        }
+      }
+    }
+  }
+
+  .mcc-grid-pagination {
+    padding: 10px 15px;
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: #ddd;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+    .clearfix:after {
+      clear: both;
+    }
+
+    .total-results {
+      border-right: 1px solid #dad5cf;
+      float: left;
+      padding-right: 10px;
+      width: auto;
+    }
+
+    .per-page {
+      color: #666;
+      float: left;
+      padding: 0 10px;
+      width: auto;
+    }
+
+    .controls {
+      border-radius: 3px;
+      float: right;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        float: left;
+
+        input {
+          background-color: #fff;
+          border-radius: 0;
+          height: 22px;
+          text-align: center;
+          width: 32px;
         }
       }
     }

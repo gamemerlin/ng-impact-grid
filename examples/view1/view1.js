@@ -73,6 +73,17 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
     header: {
       isSticky: false
     },
+    pagination: {
+      page: 1,
+      perPage: [10, 25, 50, 100],
+      totalCount: undefined,
+      totalPages: undefined,
+      firstPage: undefined,
+      prevPage: undefined,
+      nextPage: undefined,
+      lastPage: undefined,
+      getPage: undefined
+    },
     rows: {
       canEdit: function(item) {
         return $scope.canIDeleteThis(item);
@@ -83,7 +94,7 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
     },
     table: {
       autoHeightResize: false,
-      autoHeightResizeWithoutWindowScroll: true,
+      autoHeightResizeWithoutWindowScroll: false,
       canScrollX: false,
       canScrollY: true,
       bodyHeight: 100
