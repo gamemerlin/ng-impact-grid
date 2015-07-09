@@ -76,7 +76,7 @@ mccGridModule.directive('mccGridFooter', function() {
     config.prevPage = Math.max(newPrev, 1);
     config.nextPage = Math.min(newNext, config.totalPages);
   };
-  
+
   MccGridFooterController.prototype.getPage = function(config) {
 
 

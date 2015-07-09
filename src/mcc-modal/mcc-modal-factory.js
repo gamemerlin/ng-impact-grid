@@ -117,11 +117,12 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 
     var dialogHtml = angular.
         element('<div class="mcc-modal modal fade" ' +
-        'ng-class="{\'in\': modalCtrl.isVisible()}" ' +
-        'tabindex="-1" role="dialog" aria-hidden="false"></div>').
-        append(
-        angular.element('<div class="modal-dialog"></div>').
-            append(this.dialogConent_));
+            'id="{{modalCtrl.getDomId()}}" ' +
+            'ng-class="{\'in\': modalCtrl.isVisible()}" ' +
+            'tabindex="-1" role="dialog" aria-hidden="false"></div>')
+        .append(
+        angular.element('<div class="modal-dialog"></div>')
+            .append(this.dialogConent_));
 
     this.dialog_ = $compile(angular.element(dialogHtml))(this.scope_);
 
@@ -191,6 +192,10 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
         '</div>');
 
     return $compile(element)(this.scope_);
+  };
+
+  DialogConstructor.prototype.getDomId = function() {
+    return this.config_.domId;
   };
 
   DialogConstructor.prototype.getTitle = function() {

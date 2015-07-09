@@ -11,6 +11,7 @@ angular.module('myApp.view2', ['ngRoute', 'mcc.components.dialog'])
 
 .controller('View2Ctrl', ['$scope', 'mccDialog', function($scope, MccDialog) {
       $scope.dialog1 = new MccDialog({
+        domId: 'testId',
         title: 'Title for this dialog',
         showBackdrop: true,
         template: 'Template is compiled to app scope<br>' +
