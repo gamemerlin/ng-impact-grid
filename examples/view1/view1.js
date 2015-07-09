@@ -185,6 +185,24 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
       }
     },
     {
+      name: 'Katy Perry 2',
+      telephone: '999 999 9999',
+      zip: '90000',
+      activity: {
+        code: '9iii',
+        desc: 'katy perry Id'
+      }
+    },
+    {
+      name: 'Katy Perry 3',
+      telephone: '999 999 9999',
+      zip: '90000',
+      activity: {
+        code: '9iii',
+        desc: 'katy perry Id'
+      }
+    },
+    {
       name: 'Lawrence ellison',
       telephone: '666 666 6666',
       zip: '6000',

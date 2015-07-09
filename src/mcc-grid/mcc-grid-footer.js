@@ -45,9 +45,18 @@ mccGridModule.directive('mccGridFooter', function() {
     // first per page size if supplied. Default to 10 if
     // nothing is provided.
     config.perPage = config.perPage ? config.perPage :
-        config.perPageSizes && onfig.perPageSizes.length ? config.perPageSizes[0] : DEFAULT_PER_PAGE;
+        config.perPageSizes && config.perPageSizes.length ? config.perPageSizes[0] : DEFAULT_PER_PAGE;
 
     return config.perPage;
+  };
+
+  MccGridFooterController.prototype.getPerPageSizes = function() {
+    return this.getConfig_().perPageSizes;
+    this.updateConfig_();
+  };
+
+  MccGridFooterController.prototype.setPageSize = function(pageLength) {
+    this.getConfig_().perPage = pageLength;
   };
 
   MccGridFooterController.prototype.getTotalPages = function() {
@@ -66,12 +75,12 @@ mccGridModule.directive('mccGridFooter', function() {
   MccGridFooterController.prototype.updateConfig_ = function(targetPage) {
     var config = this.getConfig_();
 
-    config.page = targetPage;
+    config.page = targetPage || config.page || 1;
     config.firstPage = 1;
     config.lastPage = config.lastPage ? config.lastPage : this.getTotalPages();
 
-    var newPrev = targetPage - 1,
-        newNext = targetPage + 1;
+    var newPrev = config.page - 1,
+        newNext = config.page + 1;
 
     config.prevPage = Math.max(newPrev, 1);
     config.nextPage = Math.min(newNext, config.totalPages);
@@ -83,23 +92,27 @@ mccGridModule.directive('mccGridFooter', function() {
   };
 
   MccGridFooterController.prototype.gotoFirstPage = function() {
+    console.log('firstPage')
     this.gotoPage(this.getConfig_().firstPage);
   };
 
   MccGridFooterController.prototype.gotoLastPage = function() {
+    console.log('lastPage')
     this.gotoPage(this.getConfig_().lastPage);
   };
 
   MccGridFooterController.prototype.gotoPrevPage = function() {
+    console.log('prevPage')
     this.gotoPage(this.getConfig_().prevPage);
   };
 
   MccGridFooterController.prototype.gotoNextPage = function() {
+    console.log('nextPage')
     this.gotoPage(this.getConfig_().nextPage);
   };
 
   return {
-    restrict: 'E',
+    restrict: 'A',
     replace: true,
     controller: MccGridFooterController,
     controllerAs: 'FooterCtrl',

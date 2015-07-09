@@ -92,7 +92,7 @@ mccGridModule.directive('mccGridBody', function() {
   };
 
   return {
-    restrict: 'E',
+    restrict: 'A',
     replace: true,
     controller: MccGridBodyController,
     controllerAs: 'BodyCtrl',
