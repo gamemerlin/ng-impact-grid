@@ -1,4 +1,6 @@
+(function() {
 "use strict";
+  
 var dialogModule = angular.module("mcc.components.dialog", []);
 
 /**
@@ -274,3 +276,5 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 dialogModule
     .service('mccBackdropService', BackdropService)
     .factory('mccDialog', DialogFactory);
+
+})();
