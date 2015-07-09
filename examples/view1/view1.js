@@ -75,7 +75,8 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
     },
     pagination: {
       page: 1,
-      perPage: [10, 25, 50, 100],
+      perPageSizes: [10, 25, 50, 100],
+      perPage: 10,
       totalCount: undefined,
       totalPages: undefined,
       firstPage: undefined,
