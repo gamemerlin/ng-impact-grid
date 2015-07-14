@@ -7,6 +7,12 @@ mccGridModule.directive('mccGridFooter', function() {
    */
   function MccGridFooterController($scope) {
     this.scope_ = $scope;
+
+    var me = this;
+
+    $scope.$watch('Footer.Ctrl.getConfig_()', function () {
+      me.updateConfig_();
+    });
   }
   MccGridFooterController.$inject = ['$scope'];
 
@@ -19,19 +25,9 @@ mccGridModule.directive('mccGridFooter', function() {
     return this.scope_.GridCtrl.getConfig().pagination;
   };
 
-      //page: listMetaData.page,
-      //inputPage: listMetaData.page,
-      //perPage: listMetaData.per_page,
-      //totalCount: listMetaData.total_items,
-      //totalPages: listMetaData.total_pages,
-      //firstPage: listMetaData.first_params,
-      //prevPage: listMetaData.previous_params,
-      //nextPage: listMetaData.next_params,
-      //lastPage: listMetaData.last_params,
-
   MccGridFooterController.prototype.getTotalCount = function() {
     if (!this.getConfig_().totalCount) {
-      this.getConfig_().totalCount = this.scope_.GridCtrl.getRows().length;
+      this.getConfig_().totalCount = this.scope_.GridCtrl.getAllRows().length;
     }
 
     return this.getConfig_().totalCount;
@@ -52,17 +48,22 @@ mccGridModule.directive('mccGridFooter', function() {
 
   MccGridFooterController.prototype.getPerPageSizes = function() {
     return this.getConfig_().perPageSizes;
-    this.updateConfig_();
   };
 
   MccGridFooterController.prototype.setPageSize = function(pageLength) {
     this.getConfig_().perPage = pageLength;
+    this.getConfig_().totalPages =
+        Math.ceil(this.getTotalCount() / this.getConfig_().perPage);
+
+    // Send user back to page 1
+    this.getConfig_().page = 1;
+
+    this.updateConfig_();
   };
 
   MccGridFooterController.prototype.getTotalPages = function() {
     var config = this.getConfig_();
-    config.totalPages = config.totalPages ?
-        config.totalPages : this.getTotalCount() / this.getPerPage();
+    config.totalPages = Math.ceil(this.getTotalCount() / this.getPerPage());
 
     return this.getConfig_().totalPages;
   };
@@ -76,8 +77,9 @@ mccGridModule.directive('mccGridFooter', function() {
     var config = this.getConfig_();
 
     config.page = targetPage || config.page || 1;
+
     config.firstPage = 1;
-    config.lastPage = config.lastPage ? config.lastPage : this.getTotalPages();
+    config.lastPage = this.getTotalPages();
 
     var newPrev = config.page - 1,
         newNext = config.page + 1;
@@ -92,22 +94,18 @@ mccGridModule.directive('mccGridFooter', function() {
   };
 
   MccGridFooterController.prototype.gotoFirstPage = function() {
-    console.log('firstPage')
     this.gotoPage(this.getConfig_().firstPage);
   };
 
   MccGridFooterController.prototype.gotoLastPage = function() {
-    console.log('lastPage')
     this.gotoPage(this.getConfig_().lastPage);
   };
 
   MccGridFooterController.prototype.gotoPrevPage = function() {
-    console.log('prevPage')
     this.gotoPage(this.getConfig_().prevPage);
   };
 
   MccGridFooterController.prototype.gotoNextPage = function() {
-    console.log('nextPage')
     this.gotoPage(this.getConfig_().nextPage);
   };
 

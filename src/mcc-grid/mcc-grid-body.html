@@ -1,7 +1,7 @@
 <div class="mcc-grid-body-container" ng-style="{'height': BodyCtrl.getHeight()}" ng-class="{'can-scroll-x': BodyCtrl.canScrollX(), 'can-scroll-y': BodyCtrl.canScrollY()}">
   <table>
     <tbody>
-      <tr ng-repeat="row in GridCtrl.getRows()">
+      <tr ng-repeat="row in GridCtrl.getViewPortRows()">
         <td class="mcc-grid-td" ng-repeat="cell in row.getCells()">
           {{cell.value}}
         </td>

@@ -161,7 +161,7 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
   DialogConstructor.prototype.compileHeader_ = function() {
     var element = angular.element(
         '<div class="modal-header" ng-if="modalCtrl.getTitle()">' +
-        ' <h4 class="modal-title" ng-bind="modalCtrl.getTitle()"></h4></div>');
+        ' <span class="modal-title" ng-bind="modalCtrl.getTitle()"></span></div>');
 
     return $compile(element)(this.scope_);
   };

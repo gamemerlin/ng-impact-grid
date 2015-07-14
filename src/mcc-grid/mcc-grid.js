@@ -128,11 +128,29 @@ mccGridModule.directive('mccGrid', function () {
 
   /**
    * @returns {Array}
-   *      The list of rows to bind to. These rows are Row object wrappers around
-   *      the grid data.
+   *      The list of rows all available. These rows are Row object
+   *      wrappers around the grid data.
    */
-  MccGridController.prototype.getRows = function () {
+  MccGridController.prototype.getAllRows = function () {
     return this.rows_;
+  };
+
+  MccGridController.prototype.getRowsForPage = function(pageNumber) {
+    var pagination = this.getConfig().pagination;
+    console.log('getRowsForPage ', pagination)
+    return this.getAllRows().slice((pagination.page - 1) * pagination.perPage, pagination.page * pagination.perPage);
+  };
+
+  /**
+   * @returns {Array}
+   *      The list of rows to bind to. These rows are Row object
+   *      wrappers around the grid data.
+   */
+  MccGridController.prototype.getViewPortRows = function () {
+    var pagination = this.getConfig().pagination;
+
+    return pagination ?
+        this.getRowsForPage(pagination.page) : this.getAllRows();
   };
 
   /**
