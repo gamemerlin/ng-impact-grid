@@ -8,11 +8,11 @@ mccGridModule.directive('mccGridFooter', function() {
   function MccGridFooterController($scope) {
     this.scope_ = $scope;
 
-    var me = this;
-
-    $scope.$watch('Footer.Ctrl.getConfig_()', function () {
-      me.updateConfig_();
-    });
+    $scope.$watch('Footer.Ctrl.getConfig_()', angular.bind(
+      this,
+      function () {
+        this.updateConfig_();
+      }));
   }
   MccGridFooterController.$inject = ['$scope'];
 

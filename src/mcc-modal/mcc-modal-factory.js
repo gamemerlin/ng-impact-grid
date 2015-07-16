@@ -1,6 +1,6 @@
 (function() {
 "use strict";
-  
+
 var dialogModule = angular.module("mcc.components.dialog", []);
 
 /**
@@ -44,6 +44,8 @@ BackdropService.prototype.createBackdrop = function() {
       find('body').
       append(element);
 
+  this.backdropElement_ = element;
+
   this.isCreated_ = true;
 };
 
@@ -61,6 +63,14 @@ BackdropService.prototype.hideBackdrop = function() {
 
 BackdropService.prototype.isVisible = function() {
   return this.isVisible_;
+};
+
+BackdropService.prototype.destroy = function() {
+  this.backdropElement_.remove();
+
+  this.backdropElement_ = null;
+
+  this.isCreated_ = false;
 };
 
 /**
@@ -104,6 +114,17 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
     if (config.buttons && config.buttons.length) {
       this.ensureDefaultClickHandler_();
     }
+
+    // Clean up this modal if we leave this page or
+    // if this scope somehow gets destroyed.
+    this.scope_.$on('$destroy', angular.bind(this, function() {
+      this.backdropService_.destroy();
+      angular.element($document).find('body').
+          off('keyup', this.handleEscPress_);
+
+      this.dialog_.remove();
+      this.dialog_ = null;
+    }));
   }
 
   DialogConstructor.prototype.createDialog_ = function() {
@@ -119,9 +140,9 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 
     var dialogHtml = angular.
         element('<div class="mcc-modal modal fade" ' +
-            'id="{{modalCtrl.getDomId()}}" ' +
-            'ng-class="{\'in\': modalCtrl.isVisible()}" ' +
-            'tabindex="-1" role="dialog" aria-hidden="false"></div>')
+        'id="{{modalCtrl.getDomId()}}" ' +
+        'ng-class="{\'in\': modalCtrl.isVisible()}" ' +
+        'tabindex="-1" role="dialog" aria-hidden="false"></div>')
         .append(
         angular.element('<div class="modal-dialog"></div>')
             .append(this.dialogConent_));
@@ -236,18 +257,18 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
     return this.isVisible_;
   };
 
-  DialogConstructor.prototype.bindEscape_ = function() {
-    var me = this;
+  DialogConstructor.prototype.handleEscPress_ = function(e) {
+    if (e.which == 27) {
+      this.hide();
+      // Digest modal and backdrop scopes.
+      this.scope_.$digest();
+      this.backdropService_.scope_.$digest();
+    }
+  };
 
+  DialogConstructor.prototype.bindEscape_ = function() {
     angular.element($document).find('body').
-        bind('keyup', function(e) {
-          if (e.which == 27) {
-            me.hide();
-            // Digest modal and backdrop scopes.
-            me.scope_.$digest();
-            me.backdropService_.scope_.$digest();
-          }
-        });
+        on('keyup', angular.bind(this, this.handleEscPress_));
   };
 
   /**
@@ -256,11 +277,9 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
    * @private
    */
   DialogConstructor.prototype.ensureDefaultClickHandler_ = function() {
-    var me = this;
-
-    var defaultClickHandler = function() {
-      me.hide();
-    };
+    var defaultClickHandler = angular.bind(this, function() {
+      this.hide();
+    });
 
     for (var i= 0,length = this.config_.buttons.length; i<length; i++) {
       var button = this.config_.buttons[i];
@@ -276,5 +295,4 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 dialogModule
     .service('mccBackdropService', BackdropService)
     .factory('mccDialog', DialogFactory);
-
 })();

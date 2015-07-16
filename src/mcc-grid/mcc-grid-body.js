@@ -13,17 +13,17 @@ mccGridModule.directive('mccGridBody', function() {
     this.timeout_ = $timeout;
     this.domUtils_ = domUtils;
 
-    var me = this;
-    $scope.$watch('BodyCtrl.getAutoResize()',
+    $scope.$watch('BodyCtrl.getAutoResize()', angular.bind(
+        this,
         function (oldAutoResize, newAutoResize) {
           if (newAutoResize) {
-            if (me.getTableConfig().autoHeightResizeWithoutWindowScroll) {
-              me.bindWindowResizeForAutoHeight_(true);
-            } else if (me.getTableConfig().autoHeightResize) {
-              me.bindWindowResizeForAutoHeight_();
+            if (this.getTableConfig().autoHeightResizeWithoutWindowScroll) {
+              this.bindWindowResizeForAutoHeight_(true);
+            } else if (this.getTableConfig().autoHeightResize) {
+              this.bindWindowResizeForAutoHeight_();
             }
           }
-        });
+        }));
   }
   MccGridBodyController.$inject = ['$scope', '$element', '$window', '$document', '$timeout', 'domUtils'];
 
@@ -71,24 +71,23 @@ mccGridModule.directive('mccGridBody', function() {
 
         var tableBodyContainer = angular.element(this.element_);
 
-        var me = this;
+        angular.element(this.window_).bind('resize', angular.bind(
+          this,
+          function() {
+            var windowScrollTop = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
 
-        angular.element(this.window_).bind('resize', function() {
-          var windowScrollTop = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
+            var positionRelativeToWindow = this.domUtils_.getOffsetFor(tableBodyContainer) - windowScrollTop,
+                newBodyHeight = this.window_.innerHeight - positionRelativeToWindow;
 
-          var positionRelativeToWindow = me.domUtils_.getOffsetFor(tableBodyContainer) - windowScrollTop,
-              newBodyHeight = me.window_.innerHeight - positionRelativeToWindow;
-
-          tableBodyContainer.css('height', newBodyHeight + 'px');
-        });
+            tableBodyContainer.css('height', newBodyHeight + 'px');
+          }));
 
         // Some edge cases load this table via ajax and makes
         // the initial firing of resize unpredicable. Wrap in a timeout
         // to guarantee this will resize after all other dom events.
-        var me = this;
-        this.timeout_(function() {
-          angular.element(me.window_).triggerHandler('resize');
-        });
+        this.timeout_(angular.bind(this, function() {
+          angular.element(this.window_).triggerHandler('resize');
+        }));
   };
 
   return {

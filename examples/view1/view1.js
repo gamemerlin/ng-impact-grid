@@ -71,7 +71,7 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
       },
     ],
     header: {
-      isSticky: false
+      isSticky: true
     },
     pagination: {
       page: 1,
@@ -95,7 +95,7 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
     },
     table: {
       autoHeightResize: false,
-      autoHeightResizeWithoutWindowScroll: false,
+      autoHeightResizeWithoutWindowScroll: true,
       canScrollX: false,
       canScrollY: true,
       bodyHeight: 100

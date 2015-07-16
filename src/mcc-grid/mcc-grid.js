@@ -17,13 +17,12 @@ mccGridModule.directive('mccGrid', function () {
     this.columnOrdering_ = [];
     this.cellCssClasses = {};
 
-    var me = this;
-
-    $scope.$watch('config', function (oldConfig, newConfig) {
+    $scope.$watch('config',
+        angular.bind(this, function (oldConfig, newConfig) {
       if (newConfig) {
-        me.scanForColumnOrderConfigs_(newConfig);
+        this.scanForColumnOrderConfigs_(newConfig);
       }
-    });
+    }));
 
     // Set up a watch on whether we have both field orderings and
     // all the row data ready so we can render the grid.
@@ -38,16 +37,19 @@ mccGridModule.directive('mccGrid', function () {
 
           return false;
         },
-        function (oldCanRenderRows, newCanRenderRows) {
-          if (newCanRenderRows) {
-            me.buildTableRows_(
-                $scope.gridData, me.columnOrdering_, $scope.config.rows);
-          }
-        });
+        angular.bind(this,
+            function (oldCanRenderRows, newCanRenderRows) {
+              if (newCanRenderRows) {
+                this.buildTableRows_(
+                    $scope.gridData, this.columnOrdering_, $scope.config.rows);
+              }
+            }));
 
-    $scope.$on('sortColumn', function(event, field) {
-      me.sortColumnBy_(event, field);
-    });
+    $scope.$on(
+        'sortColumn',
+        angular.bind(this, function(event, field) {
+          this.sortColumnBy_(event, field);
+        }));
   }
   MccGridController.$inject = ['$scope', '$filter', 'RowModel'];
 

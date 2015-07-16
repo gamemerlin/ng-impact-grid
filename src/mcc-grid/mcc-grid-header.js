@@ -12,24 +12,24 @@ mccGridModule.directive('mccGridHeader', function () {
     this.secondHeaderRow = [];
     this.hasGroupedColumns = false;
 
-    var me = this;
-    $scope.$watch('GridCtrl.getConfig().columns', function (oldDefs, newDefs) {
-      if (newDefs && newDefs.length) {
-        me.buildHeader_(newDefs);
-      }
-    });
+    $scope.$watch(
+        'GridCtrl.getConfig().columns',
+         angular.bind(this, function (oldDefs, newDefs) {
+          if (newDefs && newDefs.length) {
+            this.buildHeader_(newDefs);
+          }}));
 
 
     /**
      * TODO: Inject sticky header service
      * If isSticky window.onscroll service handler.
      */
-    $scope.$watch('GridCtrl.getConfig().header.isSticky',
-        function (oldIsSticky, newIsSticky) {
+    $scope.$watch(
+        'GridCtrl.getConfig().header.isSticky',
+        angular.bind(this, function (oldIsSticky, newIsSticky) {
           if (newIsSticky) {
-            me.bindWindowScrollForStickyHeaders_(me.element_)
-          }
-        });
+            this.bindWindowScrollForStickyHeaders_(this.element_)
+          }}));
   }
   MccGridHeaderController.$inject = ['$scope', '$element', '$window', 'domUtils'];
 
@@ -120,48 +120,49 @@ mccGridModule.directive('mccGridHeader', function () {
    * @private
    */
   MccGridHeaderController.prototype.bindWindowScrollForStickyHeaders_ = function () {
+    angular.element(this.window_).bind('scroll',
+        angular.bind(this, this.handleWindowScrollForStickyHeaders_));
+  };
+
+  MccGridHeaderController.prototype.handleWindowScrollForStickyHeaders_ = function () {
     var header = angular.element(this.element_),
         tableBody,
         gridContainer = header.parent(),
         headerScrollTop = this.element_[0].getBoundingClientRect().top;
 
-    var me = this;
+    var isWindowPastHeader = this.domUtils_.scrollTop() > headerScrollTop;
 
-    angular.element(this.window_).bind('scroll', function () {
-      var isWindowPastHeader = me.domUtils_.scrollTop() > headerScrollTop;
+    if (!tableBody) {
+      tableBody = header.next().find('table');
+    }
 
-      if (!tableBody) {
-        tableBody = header.next().find('table');
-      }
+    var tableBodyRows = tableBody.find('tr'),
+        lastRow = tableBodyRows[tableBodyRows.length - 1],
+        lastRowOffsetTop = this.domUtils_.getOffsetFor(lastRow);
 
-      var tableBodyRows = tableBody.find('tr'),
-          lastRow = tableBodyRows[tableBodyRows.length - 1],
-          lastRowOffsetTop = me.domUtils_.getOffsetFor(lastRow);
+    if (isWindowPastHeader) {
+      gridContainer.css('padding-top', header[0].offsetHeight + 'px');
+      header.css({
+        'position': 'fixed',
+        'top': 0,
+        'width': tableBody[0].offsetWidth
+      });
 
-      if (isWindowPastHeader) {
-        gridContainer.css('padding-top', header[0].offsetHeight + 'px');
-        header.css({
-          'position': 'fixed',
-          'top': 0,
-          'width': tableBody[0].offsetWidth
-        });
-
-        if (me.domUtils_.scrollTop() > lastRowOffsetTop - header[0].offsetHeight) {
-          header.css('display', 'none');
-        } else {
-          header.css('display', '');
-        }
+      if (this.domUtils_.scrollTop() > lastRowOffsetTop - header[0].offsetHeight) {
+        header.css('display', 'none');
       } else {
-        header.css({
-          'display': '',
-          'position': '',
-          'top': '',
-          'width': ''
-        });
-        header.css('width', '');
-        gridContainer.css('padding-top', '');
+        header.css('display', '');
       }
-    });
+    } else {
+      header.css({
+        'display': '',
+        'position': '',
+        'top': '',
+        'width': ''
+      });
+      header.css('width', '');
+      gridContainer.css('padding-top', '');
+    }
   };
 
   return {
