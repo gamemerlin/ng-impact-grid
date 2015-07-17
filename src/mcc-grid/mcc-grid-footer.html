@@ -12,9 +12,9 @@
       </ul>
     </div>
     <ul class="controls">
-      <li><a ng-click="FooterCtrl.gotoFirstPage()" class="first disabled" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-double-left"></i></a></li>
-      <li><a ng-click="FooterCtrl.gotoPrevPage()" class="previous disabled" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-left"></i></a></li>
-      <li class="counter"><form ng-submit="inputPage()" class="ng-pristine ng-valid"><input ng-model="config.inputPage" maxlength="1" ng-disabled="isOnePage()" ng-blur="resetInput()" autocomplete="off" class="ng-pristine ng-valid"> <span class="ng-binding">of</span> <span class="total-pages ng-binding" ng-bind="config.totalPages">2</span></form></li>
+      <li><a ng-click="FooterCtrl.gotoFirstPage()" class="first" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-double-left"></i></a></li>
+      <li><a ng-click="FooterCtrl.gotoPrevPage()" class="previous" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-left"></i></a></li>
+      <li class="counter"><form ng-submit="inputPage()"><input ng-model="config.inputPage" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="FooterCtrl.getTotalPages()"></span></form></li>
       <li><a ng-click="FooterCtrl.gotoNextPage()" class="next" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-right"></i></a></li>
       <li><a ng-click="FooterCtrl.gotoLastPage()" class="last" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-double-right"></i></a></li>
     </ul>

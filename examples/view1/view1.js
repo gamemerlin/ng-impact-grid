@@ -95,7 +95,7 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
     },
     table: {
       autoHeightResize: false,
-      autoHeightResizeWithoutWindowScroll: true,
+      autoHeightResizeWithoutWindowScroll: false,
       canScrollX: false,
       canScrollY: true,
       bodyHeight: 100

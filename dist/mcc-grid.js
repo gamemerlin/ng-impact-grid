@@ -54,17 +54,17 @@ mccGridModule.directive('mccGridBody', function() {
     this.timeout_ = $timeout;
     this.domUtils_ = domUtils;
 
-    var me = this;
-    $scope.$watch('BodyCtrl.getAutoResize()',
+    $scope.$watch('BodyCtrl.getAutoResize()', angular.bind(
+        this,
         function (oldAutoResize, newAutoResize) {
           if (newAutoResize) {
-            if (me.getTableConfig().autoHeightResizeWithoutWindowScroll) {
-              me.bindWindowResizeForAutoHeight_(true);
-            } else if (me.getTableConfig().autoHeightResize) {
-              me.bindWindowResizeForAutoHeight_();
+            if (this.getTableConfig().autoHeightResizeWithoutWindowScroll) {
+              this.bindWindowResizeForAutoHeight_(true);
+            } else if (this.getTableConfig().autoHeightResize) {
+              this.bindWindowResizeForAutoHeight_();
             }
           }
-        });
+        }));
   }
   MccGridBodyController.$inject = ['$scope', '$element', '$window', '$document', '$timeout', 'domUtils'];
 
@@ -112,28 +112,27 @@ mccGridModule.directive('mccGridBody', function() {
 
         var tableBodyContainer = angular.element(this.element_);
 
-        var me = this;
+        angular.element(this.window_).bind('resize', angular.bind(
+          this,
+          function() {
+            var windowScrollTop = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
 
-        angular.element(this.window_).bind('resize', function() {
-          var windowScrollTop = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
+            var positionRelativeToWindow = this.domUtils_.getOffsetFor(tableBodyContainer) - windowScrollTop,
+                newBodyHeight = this.window_.innerHeight - positionRelativeToWindow;
 
-          var positionRelativeToWindow = me.domUtils_.getOffsetFor(tableBodyContainer) - windowScrollTop,
-              newBodyHeight = me.window_.innerHeight - positionRelativeToWindow;
-
-          tableBodyContainer.css('height', newBodyHeight + 'px');
-        });
+            tableBodyContainer.css('height', newBodyHeight + 'px');
+          }));
 
         // Some edge cases load this table via ajax and makes
         // the initial firing of resize unpredicable. Wrap in a timeout
         // to guarantee this will resize after all other dom events.
-        var me = this;
-        this.timeout_(function() {
-          angular.element(me.window_).triggerHandler('resize');
-        });
+        this.timeout_(angular.bind(this, function() {
+          angular.element(this.window_).triggerHandler('resize');
+        }));
   };
 
   return {
-    restrict: 'E',
+    restrict: 'A',
     replace: true,
     controller: MccGridBodyController,
     controllerAs: 'BodyCtrl',
@@ -170,22 +169,24 @@ myModule.factory('domUtils', ['$window', function($window) {
 var mccGridModule = angular.module('mcc.directives.grid');
 
 mccGridModule.factory('CellModel', function(){
-    /**
-     * Wraps a row's rendered field in a cell model for
-     * binding purposes and to preserve state outside of
-     * the visible DOM.
-     *
-     * @param field
-     * @param value
-     * @constructor
-     */
-    function Cell(field, value) {
-        this.field = field;
-        this.value = value;
-    }
+  /**
+   * Wraps a row's rendered field in a cell model for
+   * binding purposes and to preserve state outside of
+   * the visible DOM.
+   *
+   * @param field
+   * @param value
+   * @constructor
+   */
+  function Cell(field, value) {
+    this.field = field;
+    this.value = value;
+  }
 
-    return Cell;
+  return Cell;
 });
+
+var mccGridModule = angular.module('mcc.directives.grid');
 
 mccGridModule.factory('RowModel', ['CellModel', function(Cell){
     /**
@@ -250,11 +251,110 @@ mccGridModule.directive('mccGridFooter', function() {
    */
   function MccGridFooterController($scope) {
     this.scope_ = $scope;
+
+    $scope.$watch('Footer.Ctrl.getConfig_()', angular.bind(
+      this,
+      function () {
+        this.updateConfig_();
+      }));
   }
   MccGridFooterController.$inject = ['$scope'];
 
+  /**
+   * @returns {$scope.gridConfig.pagination} the pagination
+   * configuration settings for the global grid config.
+   * @private
+   */
+  MccGridFooterController.prototype.getConfig_ = function() {
+    return this.scope_.GridCtrl.getConfig().pagination;
+  };
+
+  MccGridFooterController.prototype.getTotalCount = function() {
+    if (!this.getConfig_().totalCount) {
+      this.getConfig_().totalCount = this.scope_.GridCtrl.getAllRows().length;
+    }
+
+    return this.getConfig_().totalCount;
+  };
+
+  MccGridFooterController.prototype.getPerPage = function() {
+    var config = this.getConfig_();
+    var DEFAULT_PER_PAGE = 10;
+
+    // Take the per page if it is passed in. Else take the
+    // first per page size if supplied. Default to 10 if
+    // nothing is provided.
+    config.perPage = config.perPage ? config.perPage :
+        config.perPageSizes && config.perPageSizes.length ? config.perPageSizes[0] : DEFAULT_PER_PAGE;
+
+    return config.perPage;
+  };
+
+  MccGridFooterController.prototype.getPerPageSizes = function() {
+    return this.getConfig_().perPageSizes;
+  };
+
+  MccGridFooterController.prototype.setPageSize = function(pageLength) {
+    this.getConfig_().perPage = pageLength;
+    this.getConfig_().totalPages =
+        Math.ceil(this.getTotalCount() / this.getConfig_().perPage);
+
+    // Send user back to page 1
+    this.getConfig_().page = 1;
+
+    this.updateConfig_();
+  };
+
+  MccGridFooterController.prototype.getTotalPages = function() {
+    var config = this.getConfig_();
+    config.totalPages = Math.ceil(this.getTotalCount() / this.getPerPage());
+
+    return this.getConfig_().totalPages;
+  };
+
+  MccGridFooterController.prototype.gotoPage = function(targetPage) {
+    this.updateConfig_(targetPage);
+    this.getPage(this.getConfig_());
+  };
+
+  MccGridFooterController.prototype.updateConfig_ = function(targetPage) {
+    var config = this.getConfig_();
+
+    config.page = targetPage || config.page || 1;
+
+    config.firstPage = 1;
+    config.lastPage = this.getTotalPages();
+
+    var newPrev = config.page - 1,
+        newNext = config.page + 1;
+
+    config.prevPage = Math.max(newPrev, 1);
+    config.nextPage = Math.min(newNext, config.totalPages);
+  };
+
+  MccGridFooterController.prototype.getPage = function(config) {
+
+
+  };
+
+  MccGridFooterController.prototype.gotoFirstPage = function() {
+    this.gotoPage(this.getConfig_().firstPage);
+  };
+
+  MccGridFooterController.prototype.gotoLastPage = function() {
+    this.gotoPage(this.getConfig_().lastPage);
+  };
+
+  MccGridFooterController.prototype.gotoPrevPage = function() {
+    this.gotoPage(this.getConfig_().prevPage);
+  };
+
+  MccGridFooterController.prototype.gotoNextPage = function() {
+    this.gotoPage(this.getConfig_().nextPage);
+  };
+
   return {
-    restrict: 'E',
+    restrict: 'A',
     replace: true,
     controller: MccGridFooterController,
     controllerAs: 'FooterCtrl',
@@ -276,24 +376,24 @@ mccGridModule.directive('mccGridHeader', function () {
     this.secondHeaderRow = [];
     this.hasGroupedColumns = false;
 
-    var me = this;
-    $scope.$watch('GridCtrl.getConfig().columns', function (oldDefs, newDefs) {
-      if (newDefs && newDefs.length) {
-        me.buildHeader_(newDefs);
-      }
-    });
+    $scope.$watch(
+        'GridCtrl.getConfig().columns',
+         angular.bind(this, function (oldDefs, newDefs) {
+          if (newDefs && newDefs.length) {
+            this.buildHeader_(newDefs);
+          }}));
 
 
     /**
      * TODO: Inject sticky header service
      * If isSticky window.onscroll service handler.
      */
-    $scope.$watch('GridCtrl.getConfig().header.isSticky',
-        function (oldIsSticky, newIsSticky) {
+    $scope.$watch(
+        'GridCtrl.getConfig().header.isSticky',
+        angular.bind(this, function (oldIsSticky, newIsSticky) {
           if (newIsSticky) {
-            me.bindWindowScrollForStickyHeaders_(me.element_)
-          }
-        });
+            this.bindWindowScrollForStickyHeaders_(this.element_)
+          }}));
   }
   MccGridHeaderController.$inject = ['$scope', '$element', '$window', 'domUtils'];
 
@@ -384,48 +484,49 @@ mccGridModule.directive('mccGridHeader', function () {
    * @private
    */
   MccGridHeaderController.prototype.bindWindowScrollForStickyHeaders_ = function () {
+    angular.element(this.window_).bind('scroll',
+        angular.bind(this, this.handleWindowScrollForStickyHeaders_));
+  };
+
+  MccGridHeaderController.prototype.handleWindowScrollForStickyHeaders_ = function () {
     var header = angular.element(this.element_),
         tableBody,
         gridContainer = header.parent(),
         headerScrollTop = this.element_[0].getBoundingClientRect().top;
 
-    var me = this;
+    var isWindowPastHeader = this.domUtils_.scrollTop() > headerScrollTop;
 
-    angular.element(this.window_).bind('scroll', function () {
-      var isWindowPastHeader = me.domUtils_.scrollTop() > headerScrollTop;
+    if (!tableBody) {
+      tableBody = header.next().find('table');
+    }
 
-      if (!tableBody) {
-        tableBody = header.next().find('table');
-      }
+    var tableBodyRows = tableBody.find('tr'),
+        lastRow = tableBodyRows[tableBodyRows.length - 1],
+        lastRowOffsetTop = this.domUtils_.getOffsetFor(lastRow);
 
-      var tableBodyRows = tableBody.find('tr'),
-          lastRow = tableBodyRows[tableBodyRows.length - 1],
-          lastRowOffsetTop = me.domUtils_.getOffsetFor(lastRow);
+    if (isWindowPastHeader) {
+      gridContainer.css('padding-top', header[0].offsetHeight + 'px');
+      header.css({
+        'position': 'fixed',
+        'top': 0,
+        'width': tableBody[0].offsetWidth
+      });
 
-      if (isWindowPastHeader) {
-        gridContainer.css('padding-top', header[0].offsetHeight + 'px');
-        header.css({
-          'position': 'fixed',
-          'top': 0,
-          'width': tableBody[0].offsetWidth
-        });
-
-        if (me.domUtils_.scrollTop() > lastRowOffsetTop - header[0].offsetHeight) {
-          header.css('display', 'none');
-        } else {
-          header.css('display', '');
-        }
+      if (this.domUtils_.scrollTop() > lastRowOffsetTop - header[0].offsetHeight) {
+        header.css('display', 'none');
       } else {
-        header.css({
-          'display': '',
-          'position': '',
-          'top': '',
-          'width': ''
-        });
-        header.css('width', '');
-        gridContainer.css('padding-top', '');
+        header.css('display', '');
       }
-    });
+    } else {
+      header.css({
+        'display': '',
+        'position': '',
+        'top': '',
+        'width': ''
+      });
+      header.css('width', '');
+      gridContainer.css('padding-top', '');
+    }
   };
 
   return {
@@ -532,13 +633,12 @@ mccGridModule.directive('mccGrid', function () {
     this.columnOrdering_ = [];
     this.cellCssClasses = {};
 
-    var me = this;
-
-    $scope.$watch('config', function (oldConfig, newConfig) {
+    $scope.$watch('config',
+        angular.bind(this, function (oldConfig, newConfig) {
       if (newConfig) {
-        me.scanForColumnOrderConfigs_(newConfig);
+        this.scanForColumnOrderConfigs_(newConfig);
       }
-    });
+    }));
 
     // Set up a watch on whether we have both field orderings and
     // all the row data ready so we can render the grid.
@@ -553,16 +653,19 @@ mccGridModule.directive('mccGrid', function () {
 
           return false;
         },
-        function (oldCanRenderRows, newCanRenderRows) {
-          if (newCanRenderRows) {
-            me.buildTableRows_(
-                $scope.gridData, me.columnOrdering_, $scope.config.rows);
-          }
-        });
+        angular.bind(this,
+            function (oldCanRenderRows, newCanRenderRows) {
+              if (newCanRenderRows) {
+                this.buildTableRows_(
+                    $scope.gridData, this.columnOrdering_, $scope.config.rows);
+              }
+            }));
 
-    $scope.$on('sortColumn', function(event, field) {
-      me.sortColumnBy_(event, field);
-    });
+    $scope.$on(
+        'sortColumn',
+        angular.bind(this, function(event, field) {
+          this.sortColumnBy_(event, field);
+        }));
   }
   MccGridController.$inject = ['$scope', '$filter', 'RowModel'];
 
@@ -643,11 +746,29 @@ mccGridModule.directive('mccGrid', function () {
 
   /**
    * @returns {Array}
-   *      The list of rows to bind to. These rows are Row object wrappers around
-   *      the grid data.
+   *      The list of rows all available. These rows are Row object
+   *      wrappers around the grid data.
    */
-  MccGridController.prototype.getRows = function () {
+  MccGridController.prototype.getAllRows = function () {
     return this.rows_;
+  };
+
+  MccGridController.prototype.getRowsForPage = function(pageNumber) {
+    var pagination = this.getConfig().pagination;
+    console.log('getRowsForPage ', pagination)
+    return this.getAllRows().slice((pagination.page - 1) * pagination.perPage, pagination.page * pagination.perPage);
+  };
+
+  /**
+   * @returns {Array}
+   *      The list of rows to bind to. These rows are Row object
+   *      wrappers around the grid data.
+   */
+  MccGridController.prototype.getViewPortRows = function () {
+    var pagination = this.getConfig().pagination;
+
+    return pagination ?
+        this.getRowsForPage(pagination.page) : this.getAllRows();
   };
 
   /**
@@ -691,7 +812,9 @@ mccGridModule.directive('mccGrid', function () {
   }
 });
 
+(function() {
 "use strict";
+
 var dialogModule = angular.module("mcc.components.dialog", []);
 
 /**
@@ -726,7 +849,7 @@ function BackdropService($rootScope, $document, $compile) {
  */
 BackdropService.prototype.createBackdrop = function() {
   var BACKDROP_HTML =
-      '<div ng-class="{\'modal-backdrop fade in\': ctrl.isVisible()}"></div>';
+      '<div class="modal-backdrop" ng-class="{\'fade in\': ctrl.isVisible()}"></div>';
 
   var element = this.compile_(BACKDROP_HTML)(this.scope_);
 
@@ -734,6 +857,8 @@ BackdropService.prototype.createBackdrop = function() {
   angular.element(this.document_).
       find('body').
       append(element);
+
+  this.backdropElement_ = element;
 
   this.isCreated_ = true;
 };
@@ -752,6 +877,14 @@ BackdropService.prototype.hideBackdrop = function() {
 
 BackdropService.prototype.isVisible = function() {
   return this.isVisible_;
+};
+
+BackdropService.prototype.destroy = function() {
+  this.backdropElement_.remove();
+
+  this.backdropElement_ = null;
+
+  this.isCreated_ = false;
 };
 
 /**
@@ -795,6 +928,17 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
     if (config.buttons && config.buttons.length) {
       this.ensureDefaultClickHandler_();
     }
+
+    // Clean up this modal if we leave this page or
+    // if this scope somehow gets destroyed.
+    this.scope_.$on('$destroy', angular.bind(this, function() {
+      this.backdropService_.destroy();
+      angular.element($document).find('body').
+          off('keyup', this.handleEscPress_);
+
+      this.dialog_.remove();
+      this.dialog_ = null;
+    }));
   }
 
   DialogConstructor.prototype.createDialog_ = function() {
@@ -810,11 +954,12 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 
     var dialogHtml = angular.
         element('<div class="mcc-modal modal fade" ' +
+        'id="{{modalCtrl.getDomId()}}" ' +
         'ng-class="{\'in\': modalCtrl.isVisible()}" ' +
-        'tabindex="-1" role="dialog" aria-hidden="false"></div>').
-        append(
-        angular.element('<div class="modal-dialog"></div>').
-            append(this.dialogConent_));
+        'tabindex="-1" role="dialog" aria-hidden="false"></div>')
+        .append(
+        angular.element('<div class="modal-dialog"></div>')
+            .append(this.dialogConent_));
 
     this.dialog_ = $compile(angular.element(dialogHtml))(this.scope_);
 
@@ -851,7 +996,7 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
   DialogConstructor.prototype.compileHeader_ = function() {
     var element = angular.element(
         '<div class="modal-header" ng-if="modalCtrl.getTitle()">' +
-        ' <h4 class="modal-title" ng-bind="modalCtrl.getTitle()"></h4></div>');
+        ' <span class="modal-title" ng-bind="modalCtrl.getTitle()"></span></div>');
 
     return $compile(element)(this.scope_);
   };
@@ -875,7 +1020,7 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
    */
   DialogConstructor.prototype.compileFooter_ = function() {
     var element = angular.element(
-        '<div class="modal-footer" ng-if="modalCtrl.getButtons()">' +
+        '<div class="modal-footer" ng-if="modalCtrl.hasButtons()">' +
         ' <button type="button" class="btn" ' +
         '     ng-repeat="button in modalCtrl.getButtons()" ' +
         '     ng-click="button.clickHandler()" ' +
@@ -886,12 +1031,20 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
     return $compile(element)(this.scope_);
   };
 
+  DialogConstructor.prototype.getDomId = function() {
+    return this.config_.domId;
+  };
+
   DialogConstructor.prototype.getTitle = function() {
     return this.config_.title;
   };
 
   DialogConstructor.prototype.getButtons = function() {
     return this.config_.buttons;
+  };
+
+  DialogConstructor.prototype.hasButtons = function() {
+    return this.config_.buttons && this.config_.buttons.length;
   };
 
   DialogConstructor.prototype.getDialogButtons = function() {
@@ -918,18 +1071,18 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
     return this.isVisible_;
   };
 
-  DialogConstructor.prototype.bindEscape_ = function() {
-    var me = this;
+  DialogConstructor.prototype.handleEscPress_ = function(e) {
+    if (e.which == 27) {
+      this.hide();
+      // Digest modal and backdrop scopes.
+      this.scope_.$digest();
+      this.backdropService_.scope_.$digest();
+    }
+  };
 
+  DialogConstructor.prototype.bindEscape_ = function() {
     angular.element($document).find('body').
-        bind('keyup', function(e) {
-          if (e.which == 27) {
-            me.hide();
-            // Digest modal and backdrop scopes.
-            me.scope_.$digest();
-            me.backdropService_.scope_.$digest();
-          }
-        });
+        on('keyup', angular.bind(this, this.handleEscPress_));
   };
 
   /**
@@ -938,11 +1091,9 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
    * @private
    */
   DialogConstructor.prototype.ensureDefaultClickHandler_ = function() {
-    var me = this;
-
-    var defaultClickHandler = function() {
-      me.hide();
-    };
+    var defaultClickHandler = angular.bind(this, function() {
+      this.hide();
+    });
 
     for (var i= 0,length = this.config_.buttons.length; i<length; i++) {
       var button = this.config_.buttons[i];
@@ -958,3 +1109,4 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 dialogModule
     .service('mccBackdropService', BackdropService)
     .factory('mccDialog', DialogFactory);
+})();

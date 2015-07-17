@@ -51,6 +51,13 @@
       float: left;
       padding: 0 10px;
       width: auto; }
+      .mcc-grid-container .mcc-grid-pagination .per-page ul, .mcc-grid-container .mcc-grid-pagination .per-page li, .mcc-grid-container .mcc-grid-pagination .per-page span {
+        display: inline-block; }
+      .mcc-grid-container .mcc-grid-pagination .per-page li {
+        padding: 2px; }
+      .mcc-grid-container .mcc-grid-pagination .per-page ul {
+        margin: 0;
+        padding: 0; }
     .mcc-grid-container .mcc-grid-pagination .controls {
       border-radius: 3px;
       float: right;
@@ -59,6 +66,17 @@
       padding: 0; }
       .mcc-grid-container .mcc-grid-pagination .controls li {
         float: left; }
+        .mcc-grid-container .mcc-grid-pagination .controls li.counter {
+          padding: 0 10px; }
+        .mcc-grid-container .mcc-grid-pagination .controls li a {
+          border: 1px solid #eee;
+          color: #333;
+          display: block;
+          font-size: 18px;
+          height: 22px;
+          line-height: 1;
+          width: 33px;
+          text-align: center; }
         .mcc-grid-container .mcc-grid-pagination .controls li input {
           background-color: #fff;
           border-radius: 0;
