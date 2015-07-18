@@ -7,12 +7,6 @@ mccGridModule.directive('mccGridFooter', function() {
    */
   function MccGridPaginationController($scope) {
     this.scope_ = $scope;
-
-    $scope.$watch('Footer.Ctrl.getConfig()', angular.bind(
-      this,
-      function () {
-        this.updateConfig_();
-      }));
   }
   MccGridPaginationController.$inject = ['$scope'];
 
@@ -74,7 +68,7 @@ mccGridModule.directive('mccGridFooter', function() {
   };
 
   MccGridPaginationController.prototype.gotoPage = function(targetPage) {
-    this.updateConfig_(targetPage);
+    this.updatePagingationState_(targetPage);
     console.log('gotoPage state is ', this.getState())
     if (this.getState().getPage) {
       this.getState().getPage(this.getState());
@@ -82,7 +76,7 @@ mccGridModule.directive('mccGridFooter', function() {
 
   };
 
-  MccGridPaginationController.prototype.updateConfig_ = function(targetPage) {
+  MccGridPaginationController.prototype.updatePagingationState_ = function(targetPage) {
     var config = this.getState();
 
     config.page = targetPage || config.page || 1;
