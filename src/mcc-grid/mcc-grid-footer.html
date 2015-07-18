@@ -1,22 +1,22 @@
 <div class="mcc-grid-pagination">
   <div class="clearfix">
     <div class="total-results">
-      <b class="ng-binding">{{ FooterCtrl.getTotalCount() }}</b><span class="ng-binding"> Total Result(s)</span>
+      <b class="ng-binding">{{ PaginationCtrl.getTotalCount() }}</b><span class="ng-binding"> Total Result(s)</span>
     </div>
     <div class="per-page">
       <span class="ng-binding">Per page</span>
       <ul>
-        <li ng-repeat="pageLength in FooterCtrl.getPerPageSizes()">
-          <a href="" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="FooterCtrl.setPageSize(pageLength)">{{ pageLength }}</a>
+        <li ng-repeat="pageLength in PaginationCtrl.getPerPageSizes()">
+          <a href="" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="PaginationCtrl.setPageSize(pageLength)">{{ pageLength }}</a>
         </li>
       </ul>
     </div>
     <ul class="controls">
-      <li><a ng-click="FooterCtrl.gotoFirstPage()" class="first" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-double-left"></i></a></li>
-      <li><a ng-click="FooterCtrl.gotoPrevPage()" class="previous" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-left"></i></a></li>
-      <li class="counter"><form ng-submit="inputPage()"><input ng-model="config.inputPage" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="FooterCtrl.getTotalPages()"></span></form></li>
-      <li><a ng-click="FooterCtrl.gotoNextPage()" class="next" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-right"></i></a></li>
-      <li><a ng-click="FooterCtrl.gotoLastPage()" class="last" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-double-right"></i></a></li>
+      <li><a ng-click="PaginationCtrl.gotoFirstPage()" class="first" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-double-left"></i></a></li>
+      <li><a ng-click="PaginationCtrl.gotoPrevPage()" class="previous" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-left"></i></a></li>
+      <li class="counter"><form ng-submit="inputPage()"><input ng-model="config.inputPage" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span></form></li>
+      <li><a ng-click="PaginationCtrl.gotoNextPage()" class="next" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-right"></i></a></li>
+      <li><a ng-click="PaginationCtrl.gotoLastPage()" class="last" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-double-right"></i></a></li>
     </ul>
 </div>
 </div>

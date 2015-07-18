@@ -5,7 +5,7 @@ mccGridModule.directive('mccGridFooter', function() {
    * @param $scope
    * @constructor
    */
-  function MccGridFooterController($scope) {
+  function MccGridPaginationController($scope) {
     this.scope_ = $scope;
 
     $scope.$watch('Footer.Ctrl.getConfig_()', angular.bind(
@@ -14,18 +14,18 @@ mccGridModule.directive('mccGridFooter', function() {
         this.updateConfig_();
       }));
   }
-  MccGridFooterController.$inject = ['$scope'];
+  MccGridPaginationController.$inject = ['$scope'];
 
   /**
    * @returns {$scope.gridConfig.pagination} the pagination
    * configuration settings for the global grid config.
    * @private
    */
-  MccGridFooterController.prototype.getConfig_ = function() {
+  MccGridPaginationController.prototype.getConfig_ = function() {
     return this.scope_.GridCtrl.getConfig().pagination;
   };
 
-  MccGridFooterController.prototype.getTotalCount = function() {
+  MccGridPaginationController.prototype.getTotalCount = function() {
     if (!this.getConfig_().totalCount) {
       this.getConfig_().totalCount = this.scope_.GridCtrl.getAllRows().length;
     }
@@ -33,7 +33,7 @@ mccGridModule.directive('mccGridFooter', function() {
     return this.getConfig_().totalCount;
   };
 
-  MccGridFooterController.prototype.getPerPage = function() {
+  MccGridPaginationController.prototype.getPerPage = function() {
     var config = this.getConfig_();
     var DEFAULT_PER_PAGE = 10;
 
@@ -46,11 +46,11 @@ mccGridModule.directive('mccGridFooter', function() {
     return config.perPage;
   };
 
-  MccGridFooterController.prototype.getPerPageSizes = function() {
+  MccGridPaginationController.prototype.getPerPageSizes = function() {
     return this.getConfig_().perPageSizes;
   };
 
-  MccGridFooterController.prototype.setPageSize = function(pageLength) {
+  MccGridPaginationController.prototype.setPageSize = function(pageLength) {
     this.getConfig_().perPage = pageLength;
     this.getConfig_().totalPages =
         Math.ceil(this.getTotalCount() / this.getConfig_().perPage);
@@ -61,19 +61,19 @@ mccGridModule.directive('mccGridFooter', function() {
     this.updateConfig_();
   };
 
-  MccGridFooterController.prototype.getTotalPages = function() {
+  MccGridPaginationController.prototype.getTotalPages = function() {
     var config = this.getConfig_();
     config.totalPages = Math.ceil(this.getTotalCount() / this.getPerPage());
 
     return this.getConfig_().totalPages;
   };
 
-  MccGridFooterController.prototype.gotoPage = function(targetPage) {
+  MccGridPaginationController.prototype.gotoPage = function(targetPage) {
     this.updateConfig_(targetPage);
     this.getPage(this.getConfig_());
   };
 
-  MccGridFooterController.prototype.updateConfig_ = function(targetPage) {
+  MccGridPaginationController.prototype.updateConfig_ = function(targetPage) {
     var config = this.getConfig_();
 
     config.page = targetPage || config.page || 1;
@@ -88,32 +88,32 @@ mccGridModule.directive('mccGridFooter', function() {
     config.nextPage = Math.min(newNext, config.totalPages);
   };
 
-  MccGridFooterController.prototype.getPage = function(config) {
+  MccGridPaginationController.prototype.getPage = function(config) {
 
 
   };
 
-  MccGridFooterController.prototype.gotoFirstPage = function() {
+  MccGridPaginationController.prototype.gotoFirstPage = function() {
     this.gotoPage(this.getConfig_().firstPage);
   };
 
-  MccGridFooterController.prototype.gotoLastPage = function() {
+  MccGridPaginationController.prototype.gotoLastPage = function() {
     this.gotoPage(this.getConfig_().lastPage);
   };
 
-  MccGridFooterController.prototype.gotoPrevPage = function() {
+  MccGridPaginationController.prototype.gotoPrevPage = function() {
     this.gotoPage(this.getConfig_().prevPage);
   };
 
-  MccGridFooterController.prototype.gotoNextPage = function() {
+  MccGridPaginationController.prototype.gotoNextPage = function() {
     this.gotoPage(this.getConfig_().nextPage);
   };
 
   return {
     restrict: 'A',
     replace: true,
-    controller: MccGridFooterController,
-    controllerAs: 'FooterCtrl',
+    controller: MccGridPaginationController,
+    controllerAs: 'PaginationCtrl',
     templateUrl: '../src/mcc-grid/mcc-grid-footer.html'
   }
 });
