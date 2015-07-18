@@ -76,14 +76,8 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
     pagination: {
       page: 1,
       perPageSizes: [5, 10, 25, 50, 100],
-      perPage: 10,
-      totalCount: undefined,
-      totalPages: undefined,
-      firstPage: undefined,
-      prevPage: undefined,
-      nextPage: undefined,
-      lastPage: undefined,
-      getPage: undefined
+      perPage: 5,
+      totalCount: 12
     },
     rows: {
       canEdit: function(item) {

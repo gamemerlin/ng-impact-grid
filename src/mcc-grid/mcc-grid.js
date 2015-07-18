@@ -138,9 +138,11 @@ mccGridModule.directive('mccGrid', function () {
   };
 
   MccGridController.prototype.getRowsForPage = function(pageNumber) {
-    var pagination = this.getConfig().pagination;
-    console.log('getRowsForPage ', pagination)
-    return this.getAllRows().slice((pagination.page - 1) * pagination.perPage, pagination.page * pagination.perPage);
+    var paginationState = this.getConfig().pagination;
+
+    return this.getAllRows().slice(
+        (paginationState.page - 1) * paginationState.perPage,
+        paginationState.page * paginationState.perPage);
   };
 
   /**
@@ -149,10 +151,10 @@ mccGridModule.directive('mccGrid', function () {
    *      wrappers around the grid data.
    */
   MccGridController.prototype.getViewPortRows = function () {
-    var pagination = this.getConfig().pagination;
+    var paginationState = this.getConfig().pagination;
 
-    return pagination ?
-        this.getRowsForPage(pagination.page) : this.getAllRows();
+    return paginationState && !paginationState.getPage ?
+        this.getRowsForPage(paginationState.page) : this.getAllRows();
   };
 
   /**

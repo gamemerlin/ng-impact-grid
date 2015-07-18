@@ -426,7 +426,7 @@ mccGridModule.directive('mccGridFooter', function() {
   function MccGridPaginationController($scope) {
     this.scope_ = $scope;
 
-    $scope.$watch('Footer.Ctrl.getConfig_()', angular.bind(
+    $scope.$watch('Footer.Ctrl.getConfig()', angular.bind(
       this,
       function () {
         this.updateConfig_();
@@ -437,22 +437,27 @@ mccGridModule.directive('mccGridFooter', function() {
   /**
    * @returns {$scope.gridConfig.pagination} the pagination
    * configuration settings for the global grid config.
-   * @private
    */
-  MccGridPaginationController.prototype.getConfig_ = function() {
+  MccGridPaginationController.prototype.getState = function() {
     return this.scope_.GridCtrl.getConfig().pagination;
   };
 
   MccGridPaginationController.prototype.getTotalCount = function() {
-    if (!this.getConfig_().totalCount) {
-      this.getConfig_().totalCount = this.scope_.GridCtrl.getAllRows().length;
+    // Remote Pagination.
+    if (this.getState().getPage) {
+      return this.getState().totalCount;
     }
 
-    return this.getConfig_().totalCount;
+    // Local pagination.
+    if (!this.getState().totalCount) {
+      this.getState().totalCount = this.scope_.GridCtrl.getAllRows().length;
+    }
+
+    return this.getState().totalCount;
   };
 
   MccGridPaginationController.prototype.getPerPage = function() {
-    var config = this.getConfig_();
+    var config = this.getState();
     var DEFAULT_PER_PAGE = 10;
 
     // Take the per page if it is passed in. Else take the
@@ -465,34 +470,38 @@ mccGridModule.directive('mccGridFooter', function() {
   };
 
   MccGridPaginationController.prototype.getPerPageSizes = function() {
-    return this.getConfig_().perPageSizes;
+    return this.getState().perPageSizes;
   };
 
   MccGridPaginationController.prototype.setPageSize = function(pageLength) {
-    this.getConfig_().perPage = pageLength;
-    this.getConfig_().totalPages =
-        Math.ceil(this.getTotalCount() / this.getConfig_().perPage);
+    this.getState().perPage = pageLength;
+    this.getState().totalPages =
+        Math.ceil(this.getTotalCount() / this.getState().perPage);
 
     // Send user back to page 1
-    this.getConfig_().page = 1;
+    this.getState().page = 1;
 
-    this.updateConfig_();
+    this.gotoPage(this.getState().page);
   };
 
   MccGridPaginationController.prototype.getTotalPages = function() {
-    var config = this.getConfig_();
+    var config = this.getState();
     config.totalPages = Math.ceil(this.getTotalCount() / this.getPerPage());
 
-    return this.getConfig_().totalPages;
+    return this.getState().totalPages;
   };
 
   MccGridPaginationController.prototype.gotoPage = function(targetPage) {
     this.updateConfig_(targetPage);
-    this.getPage(this.getConfig_());
+    console.log('gotoPage state is ', this.getState())
+    if (this.getState().getPage) {
+      this.getState().getPage(this.getState());
+    }
+
   };
 
   MccGridPaginationController.prototype.updateConfig_ = function(targetPage) {
-    var config = this.getConfig_();
+    var config = this.getState();
 
     config.page = targetPage || config.page || 1;
 
@@ -506,25 +515,20 @@ mccGridModule.directive('mccGridFooter', function() {
     config.nextPage = Math.min(newNext, config.totalPages);
   };
 
-  MccGridPaginationController.prototype.getPage = function(config) {
-
-
-  };
-
   MccGridPaginationController.prototype.gotoFirstPage = function() {
-    this.gotoPage(this.getConfig_().firstPage);
+    this.gotoPage(this.getState().firstPage);
   };
 
   MccGridPaginationController.prototype.gotoLastPage = function() {
-    this.gotoPage(this.getConfig_().lastPage);
+    this.gotoPage(this.getState().lastPage);
   };
 
   MccGridPaginationController.prototype.gotoPrevPage = function() {
-    this.gotoPage(this.getConfig_().prevPage);
+    this.gotoPage(this.getState().prevPage);
   };
 
   MccGridPaginationController.prototype.gotoNextPage = function() {
-    this.gotoPage(this.getConfig_().nextPage);
+    this.gotoPage(this.getState().nextPage);
   };
 
   return {
@@ -754,9 +758,11 @@ mccGridModule.directive('mccGrid', function () {
   };
 
   MccGridController.prototype.getRowsForPage = function(pageNumber) {
-    var pagination = this.getConfig().pagination;
-    console.log('getRowsForPage ', pagination)
-    return this.getAllRows().slice((pagination.page - 1) * pagination.perPage, pagination.page * pagination.perPage);
+    var paginationState = this.getConfig().pagination;
+
+    return this.getAllRows().slice(
+        (paginationState.page - 1) * paginationState.perPage,
+        paginationState.page * paginationState.perPage);
   };
 
   /**
@@ -765,10 +771,10 @@ mccGridModule.directive('mccGrid', function () {
    *      wrappers around the grid data.
    */
   MccGridController.prototype.getViewPortRows = function () {
-    var pagination = this.getConfig().pagination;
+    var paginationState = this.getConfig().pagination;
 
-    return pagination ?
-        this.getRowsForPage(pagination.page) : this.getAllRows();
+    return paginationState && !paginationState.getPage ?
+        this.getRowsForPage(paginationState.page) : this.getAllRows();
   };
 
   /**
