@@ -114,6 +114,6 @@ mccGridModule.directive('mccGridFooter', function() {
     replace: true,
     controller: MccGridPaginationController,
     controllerAs: 'PaginationCtrl',
-    templateUrl: '../src/mcc-grid/mcc-grid-footer.html'
+    templateUrl: '../src/mcc-grid/mcc-grid-pagination.html'
   }
 });
