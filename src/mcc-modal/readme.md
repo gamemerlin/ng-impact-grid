@@ -25,17 +25,11 @@ The mcc modal component is a factory service that returns a Constructor function
         ]}, $scope);
 }]);
 ```
-## Mcc Modal Configuration API
+## Mcc Modal Configuration and API
 
 ####MccModal factory constructor arguments
 
 The constructor takes as its arguments 1) the modal config and 2) the application target scope. If no target scope is provided an isolated scope will be created in the background:
-
-<style type="text/css">
-  td {
-    vertical-align: top;
-  }
-</style>
 
 <table>
   <thead>
@@ -100,7 +94,7 @@ The constructor takes as its arguments 1) the modal config and 2) the applicatio
   </tbody>
 </table>
 
-####Mcc Grid Column definition <a name="config-definition"></a>
+####Mcc Modal Configuration definition <a name="config-definition"></a>
 Example usage:
 ```
       $scope.something = new MccDialog({
@@ -167,7 +161,7 @@ Example usage:
   </tbody>
 </table>
 
-####Mcc Grid header configuration options <a name="button-config-defs"></a>
+####Mcc Modal footer button configuration <a name="button-config-defs"></a>
 <table>
   <thead>
     <tr>
