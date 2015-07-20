@@ -233,10 +233,6 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
     return this.config_.buttons && this.config_.buttons.length;
   };
 
-  DialogConstructor.prototype.getDialogButtons = function() {
-    return this.config_.buttons;
-  };
-
   DialogConstructor.prototype.show = function() {
     if (this.config_.showBackdrop) {
       this.backdropService_.showBackdrop();
