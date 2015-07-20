@@ -12,11 +12,30 @@
       </ul>
     </div>
     <ul class="controls">
-      <li><a ng-click="PaginationCtrl.gotoFirstPage()" class="first" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-double-left"></i></a></li>
-      <li><a ng-click="PaginationCtrl.gotoPrevPage()" class="previous" ng-class="{disabled: isFirstPage()}"><i class="fa fa-angle-left"></i></a></li>
-      <li class="counter"><form ng-submit="inputPage()"><input ng-model="PaginationCtrl.getState().page" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span></form></li>
-      <li><a ng-click="PaginationCtrl.gotoNextPage()" class="next" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-right"></i></a></li>
-      <li><a ng-click="PaginationCtrl.gotoLastPage()" class="last" ng-class="{disabled: isLastPage()}"><i class="fa fa-angle-double-right"></i></a></li>
+      <li>
+        <button class="first fa fa-angle-double-left"
+            ng-click="PaginationCtrl.gotoFirstPage()"
+            ng-disabled="!PaginationCtrl.isFirstPageEnabled()"></button>
+      </li>
+      <li>
+        <button class="previous fa fa-angle-left"
+            ng-click="PaginationCtrl.gotoPrevPage()"
+            ng-disabled="!PaginationCtrl.isPrevPageEnabled()"> </button>
+      </li>
+      <li class="counter">
+        <form ng-submit="inputPage()">
+          <input ng-model="PaginationCtrl.getState().page" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span>
+        </form>
+      </li>
+      <li>
+        <button class="next fa fa-angle-right" ng-click="PaginationCtrl.gotoNextPage()"
+            ng-disabled="!PaginationCtrl.isNextPageEnabled()"> </button>
+      </li>
+      <li>
+        <button class="last fa fa-angle-double-right"
+            ng-click="PaginationCtrl.gotoLastPage()"
+            ng-disabled="!PaginationCtrl.isLastPageEnabled()"></button>
+      </li>
     </ul>
 </div>
 </div>

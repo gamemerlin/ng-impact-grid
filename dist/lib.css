@@ -68,18 +68,27 @@
         float: left; }
         .mcc-grid-container .mcc-grid-pagination .controls li.counter {
           padding: 0 10px; }
-        .mcc-grid-container .mcc-grid-pagination .controls li a {
+        .mcc-grid-container .mcc-grid-pagination .controls li button {
+          background: #fff;
           border: 1px solid #eee;
+          box-sizing: border-box;
           color: #333;
           display: block;
-          font-size: 18px;
+          font-size: 15px;
           height: 22px;
           line-height: 1;
           width: 33px;
           text-align: center; }
+          .mcc-grid-container .mcc-grid-pagination .controls li button:focus {
+            outline: 0; }
+          .mcc-grid-container .mcc-grid-pagination .controls li button:hover {
+            background: #eee; }
+          .mcc-grid-container .mcc-grid-pagination .controls li button[disabled] {
+            background: #fff; }
         .mcc-grid-container .mcc-grid-pagination .controls li input {
           background-color: #fff;
           border-radius: 0;
+          box-sizing: border-box;
           height: 22px;
           text-align: center;
           width: 32px; }
