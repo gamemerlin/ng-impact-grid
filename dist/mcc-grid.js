@@ -656,7 +656,7 @@ mccGridModule.directive('mccGrid', function () {
     this.filter_ = $filter;
     this.RowModel_ = RowModel;
     this.rows_ = [];
-    this.columnOrdering_ = [];
+    this.flattenedColumns_ = [];
     this.cellCssClasses = {};
 
     $scope.$watch('config',
@@ -671,7 +671,7 @@ mccGridModule.directive('mccGrid', function () {
     $scope.$watch(
         function () {
           var canRenderRows = $scope.gridData && $scope.gridData.length &&
-              $scope.GridCtrl.columnOrdering_.length && $scope.config;
+              $scope.GridCtrl.flattenedColumns_.length && $scope.config;
 
           if (canRenderRows) {
             return $scope.gridData.length;
@@ -683,7 +683,7 @@ mccGridModule.directive('mccGrid', function () {
             function (oldCanRenderRows, newCanRenderRows) {
               if (newCanRenderRows) {
                 this.buildTableRows_(
-                    $scope.gridData, this.columnOrdering_, $scope.config.rows);
+                    $scope.gridData, this.flattenedColumns_, $scope.config.rows);
               }
             }));
 
@@ -711,7 +711,7 @@ mccGridModule.directive('mccGrid', function () {
       var firstRowDefinition = columnDefinitions[i];
       if (firstRowDefinition.field) {
         // Breaking apart grouped columns to get single columns in the right order.
-        this.columnOrdering_.push(firstRowDefinition.field);
+        this.flattenedColumns_.push(firstRowDefinition.field);
         // Store custom css settings.
         if (firstRowDefinition.css) {
           var key = firstRowDefinition.field;
@@ -727,7 +727,7 @@ mccGridModule.directive('mccGrid', function () {
           var secondRowDefinition = groupedColumnDefs[j];
           if (secondRowDefinition.field) {
             // Breaking apart grouped columns to get single columns in the right order.
-            this.columnOrdering_.push(secondRowDefinition.field);
+            this.flattenedColumns_.push(secondRowDefinition.field);
 
             // Store custom css settings.
             if (secondRowDefinition.css) {

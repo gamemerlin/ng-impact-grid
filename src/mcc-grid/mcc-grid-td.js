@@ -1,6 +1,6 @@
 var mccGridModule = angular.module('mcc.directives.grid');
 
-mccGridModule.directive('mccGridTd', function() {
+mccGridModule.directive('mccGridTd', ['$compile', function($compile) {
   return {
     restrict: 'C',
     link: function(scope, element, attrs) {
@@ -10,6 +10,11 @@ mccGridModule.directive('mccGridTd', function() {
       if (scope.GridCtrl.cellCssClasses[scope.cell.field]) {
         element.addClass(scope.GridCtrl.cellCssClasses[scope.cell.field].join(' '));
       }
+
+      var defaultCellTemplate = '<span ng-bind="cell.value"></span>',
+          cellContent = scope.cell.template || defaultCellTemplate;
+
+      element.append($compile(cellContent)(scope));
     }
   }
-});
+}]);

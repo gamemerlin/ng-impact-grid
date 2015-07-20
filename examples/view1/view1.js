@@ -51,6 +51,7 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
             },
             field: 'telephone',
             isSortable: true,
+            template: '<input ng-model="cell.value">',
             title: 'Phone'
           }
         ]

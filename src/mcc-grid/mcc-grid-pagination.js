@@ -76,7 +76,7 @@ mccGridModule.directive('mccGridFooter', function() {
 
   MccGridPaginationController.prototype.gotoPage = function(targetPage) {
     this.updatePagingationState_(targetPage);
-    console.log('gotoPage state is ', this.getState())
+
     if (this.getState().getPage) {
       this.getState().getPage(this.getState());
     }
@@ -115,23 +115,18 @@ mccGridModule.directive('mccGridFooter', function() {
   };
 
   MccGridPaginationController.prototype.isFirstPageEnabled = function() {
-    console.log('isFirstPageEnabled ', this.getState().page !== this.getState().firstPage)
-    console.log('paging state is ', this.getState())
     return this.getState().page !== this.getState().firstPage;
   };
 
   MccGridPaginationController.prototype.isPrevPageEnabled = function() {
-    console.log('isPrevPageEnabled ', this.getState().page !== this.getState().prevPage)
     return this.getState().page !== this.getState().prevPage;
   };
 
   MccGridPaginationController.prototype.isNextPageEnabled = function() {
-    console.log('isNextPageEnabled ', this.getState().page !== this.getState().nextPage)
     return this.getState().page !== this.getState().nextPage;
   };
 
   MccGridPaginationController.prototype.isLastPageEnabled = function() {
-    console.log('isLastPageEnabled ', this.getState().page !== this.getState().lastPage)
     return this.getState().page !== this.getState().lastPage;
   };
 

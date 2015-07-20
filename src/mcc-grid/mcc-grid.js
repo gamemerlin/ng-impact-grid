@@ -14,13 +14,13 @@ mccGridModule.directive('mccGrid', function () {
     this.filter_ = $filter;
     this.RowModel_ = RowModel;
     this.rows_ = [];
-    this.columnOrdering_ = [];
+    this.flattenedColumns_ = [];
     this.cellCssClasses = {};
 
     $scope.$watch('config',
         angular.bind(this, function (oldConfig, newConfig) {
       if (newConfig) {
-        this.scanForColumnOrderConfigs_(newConfig);
+        this.setFlattendedColumns_(newConfig);
       }
     }));
 
@@ -29,7 +29,7 @@ mccGridModule.directive('mccGrid', function () {
     $scope.$watch(
         function () {
           var canRenderRows = $scope.gridData && $scope.gridData.length &&
-              $scope.GridCtrl.columnOrdering_.length && $scope.config;
+              $scope.GridCtrl.flattenedColumns_.length && $scope.config;
 
           if (canRenderRows) {
             return $scope.gridData.length;
@@ -41,7 +41,7 @@ mccGridModule.directive('mccGrid', function () {
             function (oldCanRenderRows, newCanRenderRows) {
               if (newCanRenderRows) {
                 this.buildTableRows_(
-                    $scope.gridData, this.columnOrdering_, $scope.config.rows);
+                    $scope.gridData, this.flattenedColumns_, $scope.config.rows);
               }
             }));
 
@@ -54,48 +54,47 @@ mccGridModule.directive('mccGrid', function () {
   MccGridController.$inject = ['$scope', '$filter', 'RowModel'];
 
   /**
-   * Scan the grid configs column definitions to get the correct ordering for
-   * how the columns should be rendered. Also store and gather the custom
-   * css settings for headers and cells.
+   * @param column
+   * @private
+   */
+  MccGridController.prototype.addFlattenedColumn_ = function(column) {
+    // Breaking apart grouped columns to get single columns in the right order.
+    this.flattenedColumns_.push(column);
+    // Store custom css settings.
+    if (column.css) {
+      var key = column.field;
+
+      // A field can be of the form {key: String, getter: Function}
+      if (typeof column.field === 'object') {
+        key = column.field.key;
+      }
+      this.cellCssClasses[key] = column.css.cell || [];
+    }
+  };
+
+  /**
+   * Scan the grid configs column definitions to get a flattened ordering
+   * for how the columns should be rendered. Also store and gather
+   * the custom css settings for headers and cells.
    *
    * @param gridConfig - the grid's configuration definition.
    * @returns {Array} An array of keys which represent the field ordering.
    * @private
    */
-  MccGridController.prototype.scanForColumnOrderConfigs_ = function (gridConfig) {
+  MccGridController.prototype.setFlattendedColumns_ = function (gridConfig) {
     var columnDefinitions = gridConfig.columns;
 
     for (var i = 0, length = columnDefinitions.length; i < length; i++) {
-      var firstRowDefinition = columnDefinitions[i];
-      if (firstRowDefinition.field) {
-        // Breaking apart grouped columns to get single columns in the right order.
-        this.columnOrdering_.push(firstRowDefinition.field);
-        // Store custom css settings.
-        if (firstRowDefinition.css) {
-          var key = firstRowDefinition.field;
-
-          if (typeof firstRowDefinition.field === 'object') {
-            key = firstRowDefinition.field.key;
-          }
-          this.cellCssClasses[key] = firstRowDefinition.css.cell || [];
-        }
-      } else if (firstRowDefinition.columns && firstRowDefinition.columns.length) {
-        var groupedColumnDefs = firstRowDefinition.columns;
+      var rowOneColumnDef = columnDefinitions[i];
+      if (rowOneColumnDef.field) {
+        this.addFlattenedColumn_(rowOneColumnDef);
+      } else if (rowOneColumnDef.columns && rowOneColumnDef.columns.length) {
+        // If we have a grouped column drill in an get the actual column.
+        var groupedColumnDefs = rowOneColumnDef.columns;
         for (var j = 0, gLength = groupedColumnDefs.length; j < gLength; j++) {
-          var secondRowDefinition = groupedColumnDefs[j];
-          if (secondRowDefinition.field) {
-            // Breaking apart grouped columns to get single columns in the right order.
-            this.columnOrdering_.push(secondRowDefinition.field);
-
-            // Store custom css settings.
-            if (secondRowDefinition.css) {
-              var key = secondRowDefinition.field;
-
-              if (typeof secondRowDefinition.field === 'object') {
-                key = secondRowDefinition.field.key;
-              }
-              this.cellCssClasses[key] = secondRowDefinition.css.cell || [];
-            }
+          var rowTwoColumnDef = groupedColumnDefs[j];
+          if (rowTwoColumnDef.field) {
+            this.addFlattenedColumn_(rowTwoColumnDef);
           }
         }
       }

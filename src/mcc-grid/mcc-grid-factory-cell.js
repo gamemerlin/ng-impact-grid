@@ -7,12 +7,14 @@ mccGridModule.factory('CellModel', function(){
    * the visible DOM.
    *
    * @param field
+   * @param column
    * @param value
    * @constructor
    */
-  function Cell(field, value) {
+  function Cell(field, column, value) {
     this.field = field;
     this.value = value;
+    this.template = column.template;
   }
 
   return Cell;
