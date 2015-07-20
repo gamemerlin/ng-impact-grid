@@ -56,6 +56,11 @@ To configure your grid, in your applications controller define a bindable grid c
       <td>The row configurations for this grid.</td>
     </tr>
     <tr>
+      <td>pagination</td>
+      <td><a href="#pagination-definition">Object</td>
+      <td>Options for grid pagination.</td>
+    </tr>
+    <tr>
       <td>table</td>
       <td><a href="#table-definition">Object</td>
       <td>Options for the grid behavior.</td>
@@ -190,6 +195,53 @@ Example usage:
       <td>
           An application delete handler to delete this row. Takes as an argument the <a href="#row-model-api">Row model</a> from the grid.
       </td>
+    </tr>
+  </tbody>
+</table>
+
+####Mcc Grid pagination configuration options <a name="pagination-definition"></a>
+Example usage local pagination:
+```
+    $scope.AppCtrl.gridConfig.pagination {
+      perPageSizes: [5, 10, 25, 50, 100]
+    }
+```
+
+Example usage local pagination:
+```
+    $scope.AppCtrl.gridConfig.pagination {
+      perPageSizes: [5, 10, 25, 50, 100],
+      totalCount: $scope.externalCountFromResource,
+      getPage: function(paginationState) {
+        // should use pagination state to make a remote resource call
+        // and reset the grid's data rows.
+      }
+    }
+```
+
+<table>
+  <thead>
+    <tr>
+      <th width="100">Config Id</th>
+      <th width="100">Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>perPageSizes</td>
+      <td>Array.&lt;Number&gt;</td>
+      <td>An array of per page sizes</td>
+    </tr>
+    <tr>
+      <td>totalCount (optional)</td>
+      <td>Number</td>
+      <td>If this is a remote paginator, totalCount must be provided.</td>
+    </tr>
+    <tr>
+      <td>getPage</td>
+      <td>Function</td>
+      <td>A get page handler for remote pagingation. Takes the pagination state as an argument and is meant to reset the rows of this grid on each call.</td>
     </tr>
   </tbody>
 </table>
