@@ -223,6 +223,7 @@ Example usage local pagination:
   <thead>
     <tr>
       <th width="100">Config Id</th>
+      <th>Required?</th>
       <th width="100">Type</th>
       <th>Description</th>
     </tr>
@@ -230,16 +231,19 @@ Example usage local pagination:
   <tbody>
     <tr>
       <td>perPageSizes</td>
+      <td>Yes</td>
       <td>Array.&lt;Number&gt;</td>
       <td>An array of per page sizes</td>
     </tr>
     <tr>
-      <td>totalCount (optional)</td>
+      <td>totalCount</td>
+      <td>No</td>
       <td>Number</td>
       <td>If this is a remote paginator, totalCount must be provided.</td>
     </tr>
     <tr>
       <td>getPage</td>
+      <td>No</td>
       <td>Function</td>
       <td>A get page handler for remote pagingation. Takes the pagination state as an argument and is meant to reset the rows of this grid on each call.</td>
     </tr>
@@ -262,6 +266,7 @@ Example usage:
   <thead>
     <tr>
       <th width="100">Config Id</th>
+      <th>Required?</th>
       <th width="100">Type</th>
       <th>Description</th>
     </tr>
@@ -269,26 +274,31 @@ Example usage:
   <tbody>
     <tr>
       <td>autoHeightResize</td>
+      <td>No</td>
       <td>Boolean</td>
       <td>Will attemp to resize the TBODY to fit the page vertically if true.</td>
     </tr>
     <tr>
       <td>autoHeightResizeWithoutWindowScroll</td>
+      <td>No</td>
       <td>Boolean</td>
       <td>Will attemp to resize the TBODY to fit the page vertically and remove overflow-y fro the document BODY (document will have not scrollbars) if true.</td>
     </tr>
     <tr>
       <td>canScrollY</td>
+      <td>No</td>
       <td>Boolean</td>
       <td>Enable vertical scrolling of table body for long data sets if true.</td>
     </tr>
     <tr>
       <td>canScrollX</td>
+      <td>No</td>
       <td>Boolean</td>
       <td>Enable horizontal scrolling of wide data sets if true.</td>
     </tr>
     <tr>
       <td>bodyHeight</td>
+      <td>No</td>
       <td>Number</td>
       <td>A set height for the table</td>
     </tr>
