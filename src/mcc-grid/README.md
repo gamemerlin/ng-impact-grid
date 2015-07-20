@@ -35,6 +35,7 @@ To configure your grid, in your applications controller define a bindable grid c
   <thead>
     <tr>
       <th width="100">Config Id</th>
+      <th>Required?</th>
       <th width="200">Type</th>
       <th>Description</th>
     </tr>
@@ -42,26 +43,31 @@ To configure your grid, in your applications controller define a bindable grid c
   <tbody>
     <tr>
       <td>columns</td>
+      <td>Yes</td>
       <td>Array.&lt;<a href="#col-definition">Column Definition</a>&gt;</td>
       <td>A list of column definition configurations.</td>
     </tr>
     <tr>
       <td>header</td>
+      <td>No</td>
       <td><a href="#header-definition">Object</a></td>
       <td>The configuration for the header.</td>
     </tr>
     <tr>
       <td>rows</td>
+      <td>No</td>
       <td><a href="#row-definition">Object</a></td>
       <td>The row configurations for this grid.</td>
     </tr>
     <tr>
       <td>pagination</td>
+      <td>No</td>
       <td><a href="#pagination-definition">Object</td>
       <td>Options for grid pagination.</td>
     </tr>
     <tr>
       <td>table</td>
+      <td>No</td>
       <td><a href="#table-definition">Object</td>
       <td>Options for the grid behavior.</td>
     </tr>
@@ -88,6 +94,7 @@ Example usage:
   <thead>
     <tr>
       <th width="100">Config Id</th>
+      <th>Required?</th>
       <th width="100">Type</th>
       <th>Description</th>
     </tr>
@@ -95,6 +102,7 @@ Example usage:
   <tbody>
     <tr>
       <td>css</td>
+      <td>No</td>
       <td>Object</td>
       <td>
           <p>A configuration for custom css classes for the column and header as follows:</p>
@@ -110,6 +118,7 @@ Example usage:
     </tr>
     <tr>
       <td>field</td>
+      <td>No</td>
       <td>(String|Function)</td>
       <td>
         <p>If string this is a key that maps to the row data.
@@ -122,11 +131,13 @@ Example usage:
     </tr>
     <tr>
       <td>isSortable</td>
+      <td>No</td>
       <td>Boolean</td>
       <td>Whether this column is sortable.</td>
     </tr>
     <tr>
       <td>title</td>
+      <td>No</td>
       <td>String</td>
       <td>The display title of this column.</td>
     </tr>
@@ -145,6 +156,7 @@ Example usage:
   <thead>
     <tr>
       <th width="100">Config Id</th>
+      <th>Required?</th>
       <th width="100">Type</th>
       <th>Description</th>
     </tr>
@@ -152,6 +164,7 @@ Example usage:
   <tbody>
     <tr>
       <td>isSticky</td>
+      <td>No</td>
       <td>Boolean</td>
       <td>
           Whether sticky headers should be enabled. If true the header will be fixed at position:0 if the user scrolls past the table.
@@ -177,6 +190,7 @@ Example usage:
   <thead>
     <tr>
       <th width="100">Config Id</th>
+      <th>Required?</th>
       <th width="100">Type</th>
       <th>Description</th>
     </tr>
@@ -184,6 +198,7 @@ Example usage:
   <tbody>
     <tr>
       <td>canEdit</td>
+      <td>No</td>
       <td>Function</td>
       <td>
           A application handler to determine whether the user can edit this row. Takes as an argument the <a href="#row-model-api">Row model</a> from the grid.
@@ -191,6 +206,7 @@ Example usage:
     </tr>
     <tr>
       <td>deleteHandler</td>
+      <td>No</td>
       <td>Function</td>
       <td>
           An application delete handler to delete this row. Takes as an argument the <a href="#row-model-api">Row model</a> from the grid.
