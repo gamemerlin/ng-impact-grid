@@ -288,4 +288,3 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 dialogModule
     .service('mccBackdropService', BackdropService)
     .factory('mccDialog', DialogFactory);
-}
