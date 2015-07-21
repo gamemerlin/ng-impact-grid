@@ -7,8 +7,11 @@ mccGridModule.directive('mccGridTd', ['$compile', function($compile) {
       // Add custom css class during link. These classes
       // are not dynamic, we are adding at link time to avoid
       // an ng-class binding on each cell.
-      if (scope.GridCtrl.cellCssClasses[scope.cell.field]) {
-        element.addClass(scope.GridCtrl.cellCssClasses[scope.cell.field].join(' '));
+      var cellCssClasses =
+          scope.GridCtrl.cellCssClasses[scope.cell.field.key || scope.cell.field];
+
+      if (cellCssClasses && cellCssClasses.length) {
+        element.addClass(cellCssClasses.join(' '));
       }
 
       var defaultCellTemplate = '<span ng-bind="cell.value"></span>',

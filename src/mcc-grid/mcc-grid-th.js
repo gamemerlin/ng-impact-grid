@@ -46,9 +46,16 @@ mccGridModule.directive('mccGridTh', function() {
       // Set row and colspan
       scope.ThCtrl.setRowAndColSpans_(element, scope.column);
 
-      if (scope.column.css) {
-        element.addClass(scope.column.css.header.join(' '));
-        element.addClass(scope.column.css.cell.join(' '));
+      var cssConfigs = scope.column.css;
+
+      if (cssConfigs) {
+        if (cssConfigs.header && cssConfigs.header.length) {
+          element.addClass(cssConfigs.header.join(' '));
+        }
+
+        if (cssConfigs.cell && cssConfigs.cell.length) {
+          element.addClass(cssConfigs.cell.join(' '));
+        }
       }
 
       // Hook up column sorting if available.

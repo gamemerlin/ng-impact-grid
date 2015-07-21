@@ -119,51 +119,7 @@ describe('Grid layout', function() {
       });
 
       it('should render a header with grouped columns', function() {
-        // This config has grouped columns.
-        var testConfig  = {columns: [
-          {
-            css: {
-              header: ['header-0'],
-              cell: ['col-0']
-            },
-            field: 'id',
-            title: 'Id'
-          },
-          {
-            css: {
-              header: ['header-1'],
-              cell: ['col-1']
-            },
-            field: 'name',
-            title: 'Name'
-          },
-          {
-            css: {
-              header: ['header-2'],
-              cell: ['col-2']
-            },
-            title: 'Personal Info',
-            columns: [{
-              css: {
-                header: ['header-3'],
-                cell: ['col-3']
-              },
-              field: 'telephone',
-              isSortable: true,
-              title: 'Phone'
-            },
-              {
-                css: {
-                  header: ['header-4'],
-                  cell: ['col-4']
-                },
-                field: 'zip',
-                title: 'Zip'
-              }]
-          }
-        ]};
-
-        $scope.gridConfig = testConfig;
+        $scope.gridConfig = MOCK_CONFIG_GROUPED_HEADER;
 
         var element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
@@ -287,7 +243,87 @@ describe('Grid layout', function() {
               toBe(true);
         }
       });
-    });
 
+      it('should render a body with grouped headers', function() {
+        $scope.gridConfig = MOCK_CONFIG_GROUPED_HEADER;
+
+        var element = $compile(HTML_TEMPLATE)($scope);
+        $scope.$digest();
+
+        var rowsElm = $('tbody tr', element);
+        expect(rowsElm.length).toBe(10);
+
+        for (var i=0, length = MOCK_DATA.length; i<length; i++) {
+          var data = MOCK_DATA[i],
+              row = rowsElm.eq(i);
+
+          // verify text.
+          expect($('td', row).eq(0).text().trim()).
+              toBe(data.id);
+          expect($('td', row).eq(1).text().trim()).
+              toBe(data.name);
+          expect($('td', row).eq(2).text().trim()).
+              toBe(data.telephone);
+          expect($('td', row).eq(3).text().trim()).
+              toBe(data.zip);
+
+          // verify classes
+          expect($('td', row).eq(0).hasClass('col-0')).
+              toBe(true);
+          expect($('td', row).eq(1).hasClass('col-1')).
+              toBe(true);
+          expect($('td', row).eq(2).hasClass('col-3')).
+              toBe(true);
+          expect($('td', row).eq(3).hasClass('col-4')).
+              toBe(true);
+        }
+      });
+
+      it('should render a body with for deep data', function() {
+        // Add a column for a getter on the activity code.
+        $scope.gridConfig.columns.unshift({
+          css: {
+            cell: ['col-code']
+          },
+          field: {
+            key: 'code',
+            getter: function(data) {
+              return data.activity.code;
+            }
+          }
+        });
+
+        var element = $compile(HTML_TEMPLATE)($scope);
+        $scope.$digest();
+
+        var rowsElm = $('tbody tr', element);
+        expect(rowsElm.length).toBe(10);
+
+        for (var i=0, length = MOCK_DATA.length; i<length; i++) {
+          var data = MOCK_DATA[i],
+              row = rowsElm.eq(i);
+
+          // verify text.
+          expect($('td', row).eq(0).text().trim()).
+              toBe(data.activity.code);
+          expect($('td', row).eq(1).text().trim()).
+              toBe(data.name);
+          expect($('td', row).eq(2).text().trim()).
+              toBe(data.telephone);
+          expect($('td', row).eq(3).text().trim()).
+              toBe(data.zip);
+
+          // verify classes
+          expect($('td', row).eq(0).hasClass('col-code')).
+              toBe(true);
+          expect($('td', row).eq(1).hasClass('col-0')).
+              toBe(true);
+          expect($('td', row).eq(2).hasClass('col-2')).
+              toBe(true);
+          expect($('td', row).eq(3).hasClass('col-3')).
+              toBe(true);
+        }
+      });
+    });
   });
 });
