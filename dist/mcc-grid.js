@@ -174,73 +174,92 @@ mccGridModule.factory('CellModel', function(){
    * binding purposes and to preserve state outside of
    * the visible DOM.
    *
-   * @param field
-   * @param value
+   * @param columnDef - column configuration
+   * @param row - Parent row
    * @constructor
    */
-  function Cell(field, value) {
-    this.field = field;
-    this.value = value;
+  function Cell(columnDef, row) {
+    this.field = columnDef.key || columnDef.field;
+    this.value = columnDef.field.getter ?
+        columnDef.field.getter(row.getData()) : row.getData()[this.field];
+    this.row_ = row;
+    this.template = columnDef.template;
+
+    if (columnDef.field.setter) {
+      this.setValue = columnDef.field.setter;
+    }
   }
+
+  /**
+   * Saves the current cell.value into the original
+   * row.data_.
+   */
+  Cell.prototype.save = function() {
+    if (this.setValue) {
+      this.setValue(this.row_, this.value);
+    } else {
+      this.row_.getData()[this.field] = this.value;
+    }
+  };
+
+  Cell.prototype.getRow = function() {
+    return this.row_;
+  };
 
   return Cell;
 });
 
 var mccGridModule = angular.module('mcc.directives.grid');
 
-mccGridModule.factory('RowModel', ['CellModel', function(Cell){
-    /**
-     * Wraps the raw data of a row in a row object model for binding
-     * purposes and also to preserve state outside of
-     * the rendered DOM.
-     *
-     * @param rowData - The raw data for the row.
-     * @param columnOrdering - An array of field orders.
-     * @param rowConfig - The configuration for this row.
-     * @constructor
-     */
-    function Row(rowData, columnOrdering, rowConfig) {
-        this.data_ = rowData;
-        this.cells_ = [];
+mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
+  /**
+   * Wraps the raw data of a row in a row object model for binding
+   * purposes and also to preserve state outside of
+   * the rendered DOM.
+   *
+   * @param rowData - The raw data for the row.
+   * @param flattenedColumns - An array of flattened columns
+   *     in the order that they need to be rendered. Does
+   *     not have grouped columns.
+   * @param rowConfig - The configuration for this row.
+   * @constructor
+   */
+  function Row(rowData, flattenedColumns, rowConfig) {
+    this.data_ = rowData;
+    this.cells_ = [];
 
-        for (var i= 0, length=columnOrdering.length; i< length; i++) {
-            var field = columnOrdering[i];
-
-            if (typeof field === 'string') {
-                this.cells_.push(new Cell(field, rowData[field]));
-            } else if (typeof field === 'object') {
-                this.cells_.push(new Cell(field.key, field.getter(rowData)));
-            }
-        }
-
-        // Passing canEdit from the application to the model.
-        if (rowConfig && rowConfig.canEdit) {
-            this.canEdit = rowConfig.canEdit;
-        }
-
-        // Passing delete handler from the application to the model.
-        if (rowConfig && rowConfig.deleteHandler) {
-            this.deleteSelf = rowConfig.deleteHandler;
-        }
+    // Passing canEdit from the application to the model.
+    if (rowConfig && rowConfig.canEdit) {
+      this.canEdit = rowConfig.canEdit;
     }
 
-    /**
-     * Gets the rows cell object models.
-     * @returns {Array}
-     */
-    Row.prototype.getCells = function() {
-        return this.cells_;
-    };
+    // Passing delete handler from the application to the model.
+    if (rowConfig && rowConfig.deleteHandler) {
+      this.deleteSelf = rowConfig.deleteHandler;
+    }
 
-    /**
-     * Gets the the orginal dataset this model is wrapping.
-     * @returns {Object}
-     */
-    Row.prototype.getData = function() {
-        return this.data_;
-    };
+    for (var i = 0, length = flattenedColumns.length; i < length; i++) {
+      this.cells_.push(new Cell(flattenedColumns[i], this));
+    }
+  }
 
-    return Row;
+  /**
+   * Gets the rows cell object models.
+   * @returns {Array}
+   */
+  Row.prototype.getCells = function () {
+    return this.cells_;
+  };
+
+  /**
+   * Gets the the orginal dataset this model is wrapping.
+   * @returns {Object}
+   */
+  Row.prototype.getData = function () {
+    return this.data_;
+  };
+
+  return Row;
 }]);
 var mccGridModule = angular.module('mcc.directives.grid');
 
@@ -494,7 +513,7 @@ mccGridModule.directive('mccGridFooter', function() {
 
   MccGridPaginationController.prototype.gotoPage = function(targetPage) {
     this.updatePagingationState_(targetPage);
-    console.log('gotoPage state is ', this.getState())
+
     if (this.getState().getPage) {
       this.getState().getPage(this.getState());
     }
@@ -533,23 +552,18 @@ mccGridModule.directive('mccGridFooter', function() {
   };
 
   MccGridPaginationController.prototype.isFirstPageEnabled = function() {
-    console.log('isFirstPageEnabled ', this.getState().page !== this.getState().firstPage)
-    console.log('paging state is ', this.getState())
     return this.getState().page !== this.getState().firstPage;
   };
 
   MccGridPaginationController.prototype.isPrevPageEnabled = function() {
-    console.log('isPrevPageEnabled ', this.getState().page !== this.getState().prevPage)
     return this.getState().page !== this.getState().prevPage;
   };
 
   MccGridPaginationController.prototype.isNextPageEnabled = function() {
-    console.log('isNextPageEnabled ', this.getState().page !== this.getState().nextPage)
     return this.getState().page !== this.getState().nextPage;
   };
 
   MccGridPaginationController.prototype.isLastPageEnabled = function() {
-    console.log('isLastPageEnabled ', this.getState().page !== this.getState().lastPage)
     return this.getState().page !== this.getState().lastPage;
   };
 
@@ -564,7 +578,7 @@ mccGridModule.directive('mccGridFooter', function() {
 
 var mccGridModule = angular.module('mcc.directives.grid');
 
-mccGridModule.directive('mccGridTd', function() {
+mccGridModule.directive('mccGridTd', ['$compile', function($compile) {
   return {
     restrict: 'C',
     link: function(scope, element, attrs) {
@@ -574,9 +588,14 @@ mccGridModule.directive('mccGridTd', function() {
       if (scope.GridCtrl.cellCssClasses[scope.cell.field]) {
         element.addClass(scope.GridCtrl.cellCssClasses[scope.cell.field].join(' '));
       }
+
+      var defaultCellTemplate = '<span ng-bind="cell.value"></span>',
+          cellContent = scope.cell.template || defaultCellTemplate;
+
+      element.append($compile(cellContent)(scope));
     }
   }
-});
+}]);
 var mccGridModule = angular.module('mcc.directives.grid');
 
 mccGridModule.directive('mccGridTh', function() {
@@ -662,7 +681,7 @@ mccGridModule.directive('mccGrid', function () {
     $scope.$watch('config',
         angular.bind(this, function (oldConfig, newConfig) {
       if (newConfig) {
-        this.scanForColumnOrderConfigs_(newConfig);
+        this.setFlattendedColumns_(newConfig);
       }
     }));
 
@@ -696,48 +715,47 @@ mccGridModule.directive('mccGrid', function () {
   MccGridController.$inject = ['$scope', '$filter', 'RowModel'];
 
   /**
-   * Scan the grid configs column definitions to get the correct ordering for
-   * how the columns should be rendered. Also store and gather the custom
-   * css settings for headers and cells.
+   * @param column
+   * @private
+   */
+  MccGridController.prototype.addFlattenedColumn_ = function(column) {
+    // Breaking apart grouped columns to get single columns in the right order.
+    this.flattenedColumns_.push(column);
+    // Store custom css settings.
+    if (column.css) {
+      var key = column.field;
+
+      // A field can be of the form {key: String, getter: Function}
+      if (typeof column.field === 'object') {
+        key = column.field.key;
+      }
+      this.cellCssClasses[key] = column.css.cell || [];
+    }
+  };
+
+  /**
+   * Scan the grid configs column definitions to get a flattened ordering
+   * for how the columns should be rendered. Also store and gather
+   * the custom css settings for headers and cells.
    *
    * @param gridConfig - the grid's configuration definition.
    * @returns {Array} An array of keys which represent the field ordering.
    * @private
    */
-  MccGridController.prototype.scanForColumnOrderConfigs_ = function (gridConfig) {
+  MccGridController.prototype.setFlattendedColumns_ = function (gridConfig) {
     var columnDefinitions = gridConfig.columns;
 
     for (var i = 0, length = columnDefinitions.length; i < length; i++) {
-      var firstRowDefinition = columnDefinitions[i];
-      if (firstRowDefinition.field) {
-        // Breaking apart grouped columns to get single columns in the right order.
-        this.flattenedColumns_.push(firstRowDefinition.field);
-        // Store custom css settings.
-        if (firstRowDefinition.css) {
-          var key = firstRowDefinition.field;
-
-          if (typeof firstRowDefinition.field === 'object') {
-            key = firstRowDefinition.field.key;
-          }
-          this.cellCssClasses[key] = firstRowDefinition.css.cell || [];
-        }
-      } else if (firstRowDefinition.columns && firstRowDefinition.columns.length) {
-        var groupedColumnDefs = firstRowDefinition.columns;
+      var rowOneColumnDef = columnDefinitions[i];
+      if (rowOneColumnDef.field) {
+        this.addFlattenedColumn_(rowOneColumnDef);
+      } else if (rowOneColumnDef.columns && rowOneColumnDef.columns.length) {
+        // If we have a grouped column drill in an get the actual column.
+        var groupedColumnDefs = rowOneColumnDef.columns;
         for (var j = 0, gLength = groupedColumnDefs.length; j < gLength; j++) {
-          var secondRowDefinition = groupedColumnDefs[j];
-          if (secondRowDefinition.field) {
-            // Breaking apart grouped columns to get single columns in the right order.
-            this.flattenedColumns_.push(secondRowDefinition.field);
-
-            // Store custom css settings.
-            if (secondRowDefinition.css) {
-              var key = secondRowDefinition.field;
-
-              if (typeof secondRowDefinition.field === 'object') {
-                key = secondRowDefinition.field.key;
-              }
-              this.cellCssClasses[key] = secondRowDefinition.css.cell || [];
-            }
+          var rowTwoColumnDef = groupedColumnDefs[j];
+          if (rowTwoColumnDef.field) {
+            this.addFlattenedColumn_(rowTwoColumnDef);
           }
         }
       }
@@ -766,7 +784,8 @@ mccGridModule.directive('mccGrid', function () {
     this.rows_.length = 0;
 
     for (var i = 0, length = rowData.length; i < length; i++) {
-      this.rows_.push(new this.RowModel_(rowData[i], columnOrdering, rowConfig));
+      var row = new this.RowModel_(rowData[i], columnOrdering, rowConfig);
+      this.rows_.push(row);
     }
   };
 
@@ -1073,10 +1092,6 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 
   DialogConstructor.prototype.hasButtons = function() {
     return this.config_.buttons && this.config_.buttons.length;
-  };
-
-  DialogConstructor.prototype.getDialogButtons = function() {
-    return this.config_.buttons;
   };
 
   DialogConstructor.prototype.show = function() {

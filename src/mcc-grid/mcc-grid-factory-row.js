@@ -16,19 +16,7 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
   function Row(rowData, flattenedColumns, rowConfig) {
     this.data_ = rowData;
     this.cells_ = [];
-
-    for (var i = 0, length = flattenedColumns.length; i < length; i++) {
-      var field = flattenedColumns[i].field;
-
-      if (typeof field === 'string') {
-        this.cells_.push(
-            new Cell(field, flattenedColumns[i], rowData[field]));
-      } else if (typeof field === 'object') {
-        this.cells_.push(
-            new Cell(field.key, flattenedColumns[i], field.getter(rowData)));
-      }
-    }
-
+    this.isEditPending = false;
     // Passing canEdit from the application to the model.
     if (rowConfig && rowConfig.canEdit) {
       this.canEdit = rowConfig.canEdit;
@@ -37,6 +25,10 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
     // Passing delete handler from the application to the model.
     if (rowConfig && rowConfig.deleteHandler) {
       this.deleteSelf = rowConfig.deleteHandler;
+    }
+
+    for (var i = 0, length = flattenedColumns.length; i < length; i++) {
+      this.cells_.push(new Cell(flattenedColumns[i], this));
     }
   }
 
@@ -54,6 +46,20 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
    */
   Row.prototype.getData = function () {
     return this.data_;
+  };
+
+  /**
+   * Saves cells that are in isPendingEdit mode;
+   */
+  Row.prototype.save = function() {
+    for (var i = 0, length = this.cells_.length; i < length; i++) {
+      var cell = this.cells_[i];
+
+      if (cell.isEditPending) {
+        cell.save();
+        cell.isEditPending = false;
+      }
+    }
   };
 
   return Row;

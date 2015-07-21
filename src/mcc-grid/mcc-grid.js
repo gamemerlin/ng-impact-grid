@@ -123,7 +123,8 @@ mccGridModule.directive('mccGrid', function () {
     this.rows_.length = 0;
 
     for (var i = 0, length = rowData.length; i < length; i++) {
-      this.rows_.push(new this.RowModel_(rowData[i], columnOrdering, rowConfig));
+      var row = new this.RowModel_(rowData[i], columnOrdering, rowConfig);
+      this.rows_.push(row);
     }
   };
 
@@ -142,6 +143,19 @@ mccGridModule.directive('mccGrid', function () {
     return this.getAllRows().slice(
         (paginationState.page - 1) * paginationState.perPage,
         paginationState.page * paginationState.perPage);
+  };
+
+  /**
+   * Saves all rows and cells in isPendingEdit mode.
+   * Note this is an N^2 operation, row.save
+   * will iterate through cells.
+   */
+  MccGridController.prototype.save = function() {
+    for (var i = 0, length = this.rows_.length; i < length; i++) {
+      var row = this.rows_[i];
+      row.save();
+      row.isEditPending = false;
+    }
   };
 
   /**

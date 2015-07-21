@@ -51,7 +51,7 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
             },
             field: 'telephone',
             isSortable: true,
-            template: '<input ng-model="cell.value">',
+            template: '<input ng-model="cell.value" ng-blur="cell.save()">',
             title: 'Phone'
           }
         ]
@@ -65,8 +65,12 @@ angular.module('myApp.view1', ['ngRoute', 'mcc.directives.grid'])
           key: 'code',
           getter: function(data) {
             return data.activity.code;
+          },
+          setter: function(data, value) {
+            data.activity.code = value;
           }
         },
+        template: '<input ng-model="cell.value" ng-blur="cell.save()">',
         isSortable: true,
         title: 'Account Code'
       },

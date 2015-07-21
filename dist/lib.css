@@ -4,8 +4,6 @@
     overflow-x: auto; }
   .mcc-grid-container .can-scroll-y {
     overflow-y: auto; }
-  .mcc-grid-container table {
-    width: 100%; }
   .mcc-grid-container thead th {
     padding: 8px; }
   .mcc-grid-container tr:hover {
