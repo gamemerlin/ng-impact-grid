@@ -14,7 +14,11 @@ gulp.task('sass', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src('src/**/*.js')
+  return gulp
+      .src([
+        'dist-prefix.js',
+        'src/**/*.js',
+        'dist-suffix.js'])
       .pipe(gConcat('mcc-grid.js'))
       .pipe(gulp.dest('./dist/'));
 });

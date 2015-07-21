@@ -1,3 +1,6 @@
+(function() {
+"use strict";
+
 // an empty container for mcc.directives.grid namespace.
 angular.module('mcc.directives.grid', []);
 
@@ -180,10 +183,12 @@ mccGridModule.factory('CellModel', function(){
    */
   function Cell(columnDef, row) {
     this.field = columnDef.key || columnDef.field;
-    this.value = columnDef.field.getter ?
-        columnDef.field.getter(row.getData()) : row.getData()[this.field];
+    this.isEditPending = false;
     this.row_ = row;
     this.template = columnDef.template;
+
+    this.value = columnDef.field.getter ?
+        columnDef.field.getter(row.getData()) : row.getData()[this.field];
 
     if (columnDef.field.setter) {
       this.setValue = columnDef.field.setter;
@@ -196,12 +201,17 @@ mccGridModule.factory('CellModel', function(){
    */
   Cell.prototype.save = function() {
     if (this.setValue) {
-      this.setValue(this.row_, this.value);
+      this.setValue(this.row_.getData(), this.value);
     } else {
       this.row_.getData()[this.field] = this.value;
     }
+
+    this.isEditPending = false;
   };
 
+  /**
+   * @returns {Object} The parent row.
+   */
   Cell.prototype.getRow = function() {
     return this.row_;
   };
@@ -227,7 +237,7 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
   function Row(rowData, flattenedColumns, rowConfig) {
     this.data_ = rowData;
     this.cells_ = [];
-
+    this.isEditPending = false;
     // Passing canEdit from the application to the model.
     if (rowConfig && rowConfig.canEdit) {
       this.canEdit = rowConfig.canEdit;
@@ -257,6 +267,20 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
    */
   Row.prototype.getData = function () {
     return this.data_;
+  };
+
+  /**
+   * Saves cells that are in isPendingEdit mode;
+   */
+  Row.prototype.save = function() {
+    for (var i = 0, length = this.cells_.length; i < length; i++) {
+      var cell = this.cells_[i];
+
+      if (cell.isEditPending) {
+        cell.save();
+        cell.isEditPending = false;
+      }
+    }
   };
 
   return Row;
@@ -807,6 +831,19 @@ mccGridModule.directive('mccGrid', function () {
   };
 
   /**
+   * Saves all rows and cells in isPendingEdit mode.
+   * Note this is an N^2 operation, row.save
+   * will iterate through cells.
+   */
+  MccGridController.prototype.save = function() {
+    for (var i = 0, length = this.rows_.length; i < length; i++) {
+      var row = this.rows_[i];
+      row.save();
+      row.isEditPending = false;
+    }
+  };
+
+  /**
    * @returns {Array}
    *      The list of rows to bind to. These rows are Row object
    *      wrappers around the grid data.
@@ -858,9 +895,6 @@ mccGridModule.directive('mccGrid', function () {
     controllerAs: 'GridCtrl'
   }
 });
-
-(function() {
-"use strict";
 
 var dialogModule = angular.module("mcc.components.dialog", []);
 
@@ -1152,4 +1186,5 @@ function DialogFactory($rootScope, $compile, $document, $timeout, mccBackdropSer
 dialogModule
     .service('mccBackdropService', BackdropService)
     .factory('mccDialog', DialogFactory);
-})();
+}
+)();
