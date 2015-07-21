@@ -93,9 +93,9 @@ Example usage:
 <table>
   <thead>
     <tr>
-      <th width="100">Config Id</th>
+      <th width="70">Config Id</th>
       <th>Required?</th>
-      <th width="100">Type</th>
+      <th width="250">Type</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -287,9 +287,9 @@ Example usage:
 <table>
   <thead>
     <tr>
-      <th width="75">Config Id</th>
+      <th width="100">Config Id</th>
       <th>Required?</th>
-      <th width="200">Type</th>
+      <th width="100">Type</th>
       <th>Description</th>
     </tr>
   </thead>
