@@ -3,10 +3,6 @@ module.exports = function(config){
 
     basePath : '',
 
-    preprocessors: {
-      'src/**/*.html': ['html2js']
-    },
-
     files : [
       'bower_components/jquery/jquery.js',
       'bower_components/angular/angular.js',
@@ -33,10 +29,6 @@ module.exports = function(config){
             'karma-jasmine',
             'karma-junit-reporter'
             ],
-
-    ngHtml2JsPreprocessor: {
-      prependPrefix: '../'
-    },
 
     junitReporter : {
       outputFile: 'test_out/unit.xml',
