@@ -1,12 +1,12 @@
 'use strict';
 
-xdescribe('Grid layout', function() {
+describe('Grid layout', function() {
   var $compile;
   var $scope;
   var MccDialog;
   var MOCK_CONFIG;
 
-  beforeEach(module('mcc.components.dialog'));
+  beforeEach(module('mcc.factory.dialog'));
 
   // load test dependencies
   // ** The injector unwraps the underscores (_) from around the parameter names when matching
