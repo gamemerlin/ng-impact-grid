@@ -16,7 +16,7 @@ module.exports = function(config){
       'src/templates.js',
       'src/mcc-grid/**/*.js',
       'src/mcc-modal/**/*.js',
-      //'dist/mcc-grid.js',
+      //'dist/mcc-components.js',
       'tests/mcc-grid-test.js',
       'tests/mcc-modal-test.js'
     ],

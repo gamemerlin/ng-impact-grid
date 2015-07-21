@@ -36,7 +36,7 @@ gulp.task('dist', function() {
         'src/mcc-grid/**/*.js',
         'src/mcc-modal/**/*.js',
         'dist-suffix.js'])
-      .pipe(gConcat('mcc-grid.js'))
+      .pipe(gConcat('mcc-components.js'))
       .pipe(gulp.dest('./dist/'));
 });
 
