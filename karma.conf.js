@@ -17,8 +17,7 @@ module.exports = function(config){
       'src/mcc-grid/**/*.js',
       'src/mcc-modal/**/*.js',
       //'dist/mcc-components.js',
-      'tests/mcc-grid-test.js',
-      'tests/mcc-modal-test.js'
+      'tests/**/*.js'
     ],
 
     autoWatch : true,
