@@ -13,7 +13,8 @@ module.exports = function(config){
       'src/mcc-grid/**/*.js',
       'src/mcc-modal/**/*.js',
       //'dist/mcc-components.js',
-      'tests/**/*.js'
+      'tests/mocks/**/*.js',
+      'tests/components/**/*.js'
     ],
 
     autoWatch : true,

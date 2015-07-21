@@ -16,139 +16,6 @@ describe('Grid layout', function() {
   var HTML_TEMPLATE = '<mcc-grid ' +
       'data-grid-data="gridData" data-config="gridConfig"></mcc-grid>';
 
-  var MOCK_DATA = [
-    {
-      id: 1,
-      name: 'Bill Gates',
-      telephone: '111 111 1111',
-      zip: '1000',
-      activity: {
-        code: '1aaa',
-        desc: 'Bill Gates Id'
-      }
-    },
-    {
-      id: 2,
-      name: 'Larry Page',
-      telephone: '222 222 2222',
-      zip: '2000',
-      activity: {
-        code: '2bbb',
-        desc: 'Larry Page Id'
-      }
-    },
-    {
-      id: 3,
-      name: 'Elon Musk',
-      telephone: '333 333 3333',
-      zip: '3000',
-      activity: {
-        code: '3ccc',
-        desc: 'Elon Musk Id'
-      }
-    },
-    {
-      id: 4,
-      name: 'Marissa Mayer',
-      telephone: '444 444 4444',
-      zip: '4000',
-      activity: {
-        code: '4ddd',
-        desc: 'Marissa Mayer Id'
-      }
-    },
-    {
-      id: 5,
-      name: 'Mark Zuckerberg',
-      telephone: '555 555 5555',
-      zip: '5000',
-      activity: {
-        code: '5eeee',
-        desc: 'Mark Zuckerberg Id'
-      }
-    },
-    {
-      id: 6,
-      name: 'Lawrence ellison',
-      telephone: '666 666 6666',
-      zip: '6000',
-      activity: {
-        code: '6fff',
-        desc: 'Lawrence ellison Id'
-      }
-    },
-    {
-      id: 7,
-      name: 'Tom Hanks',
-      telephone: '777 777 7777',
-      zip: '7000',
-      activity: {
-        code: '7ggg',
-        desc: 'TH Id'
-      }
-    },
-    {
-      id: 8,
-      name: 'Jennifer Lawrence',
-      telephone: '888 888 8888',
-      zip: '8000',
-      activity: {
-        code: '8hhh',
-        desc: 'Jennifer Lawrence Id'
-      }
-    },
-    {
-      id: 9,
-      name: 'Katy Perry',
-      telephone: '999 999 9999',
-      zip: '90000',
-      activity: {
-        code: '9iii',
-        desc: 'katy perry Id'
-      }
-    },
-    {
-      id: 10,
-      name: 'Lawrence ellison',
-      telephone: '666 666 6666',
-      zip: '6000',
-      activity: {
-        code: '6fff',
-        desc: 'Lawrence ellison Id'
-      }
-    }
-  ];
-
-  var MOCK_CONFIG = {
-    columns: [
-      {
-        css: {
-          header: ['header-0'],
-          cell: ['col-0']
-        },
-        field: 'name',
-        title: 'Name'
-      },
-      {
-        css: {
-          header: ['header-2'],
-          cell: ['col-2']
-        },
-        field: 'telephone',
-        isSortable: true,
-        title: 'Phone'
-      },
-      {
-        css: {
-          header: ['header-3'],
-          cell: ['col-3']
-        },
-        field: 'zip',
-        title: 'Zip'
-      }
-    ]
-  };
-
   describe('Mcc grid bindings and basic rendering', function(){
     beforeEach(inject(function(_$compile_, _$rootScope_){
       $scope.gridData = MOCK_DATA;
@@ -252,6 +119,7 @@ describe('Grid layout', function() {
       });
 
       it('should render a header with grouped columns', function() {
+        // This config has grouped columns.
         var testConfig  = {columns: [
           {
             css: {
@@ -328,76 +196,98 @@ describe('Grid layout', function() {
       });
     });
 
+    describe('rendering the table body', function() {
+      it('should bind to the data passed to the row', function() {
 
-    it('should bind to the data passed to the row', function() {
+        var element = $compile(HTML_TEMPLATE)($scope);
+        $scope.$digest();
 
-      var element = $compile(HTML_TEMPLATE)($scope);
-      $scope.$digest();
+        var rowsElm = $('tbody tr', element);
+        expect(rowsElm.length).toBe(10);
 
-      var rowsElm = $('tbody tr', element);
-      expect(rowsElm.length).toBe(10);
+        for (var i=0, length = MOCK_DATA.length; i<length; i++) {
+          var data = MOCK_DATA[i],
+              row = rowsElm.eq(i);
 
-      for (var i=0, length = MOCK_DATA.length; i<length; i++) {
-        var data = MOCK_DATA[i],
-            row = rowsElm.eq(i);
-        expect($('td', row).eq(0).text().trim()).
-            toBe(data.name);
-        expect($('td', row).eq(1).text().trim()).
-            toBe(data.telephone);
-        expect($('td', row).eq(2).text().trim()).
-            toBe(data.zip);
-      }
-    });
+          // Verify Data
+          expect($('td', row).eq(0).text().trim()).
+              toBe(data.name);
+          expect($('td', row).eq(1).text().trim()).
+              toBe(data.telephone);
+          expect($('td', row).eq(2).text().trim()).
+              toBe(data.zip);
 
-    it('should bind to the data passed to the row in the order ' +
-        ' specified by the column configuration', function() {
-
-      var testConfig  = {columns: [
-        {
-          css: {
-            header: ['header-2'],
-            cell: ['col-2']
-          },
-          field: 'telephone',
-          isSortable: true,
-          title: 'Phone'
-        },
-        {
-          css: {
-            header: ['header-3'],
-            cell: ['col-3']
-          },
-          field: 'zip',
-          title: 'Zip'
-        },
-        {
-          css: {
-            header: ['header-0'],
-            cell: ['col-0']
-          },
-          field: 'name',
-          title: 'Name'
+          // Verify classes
+          expect($('td', row).eq(0).hasClass('col-0')).
+              toBe(true);
+          expect($('td', row).eq(1).hasClass('col-2')).
+              toBe(true);
+          expect($('td', row).eq(2).hasClass('col-3')).
+              toBe(true);
         }
-      ]};
+      });
 
-      $scope.gridConfig = testConfig;
+      it('should bind to the data passed to the row in the order ' +
+          ' specified by the column configuration', function() {
 
-      var element = $compile(HTML_TEMPLATE)($scope);
-      $scope.$digest();
+        var testConfig  = {columns: [
+          {
+            css: {
+              header: ['header-2'],
+              cell: ['col-2']
+            },
+            field: 'telephone',
+            isSortable: true,
+            title: 'Phone'
+          },
+          {
+            css: {
+              header: ['header-3'],
+              cell: ['col-3']
+            },
+            field: 'zip',
+            title: 'Zip'
+          },
+          {
+            css: {
+              header: ['header-0'],
+              cell: ['col-0']
+            },
+            field: 'name',
+            title: 'Name'
+          }
+        ]};
 
-      var rowsElm = $('tbody tr', element);
-      expect(rowsElm.length).toBe(10);
+        $scope.gridConfig = testConfig;
 
-      for (var i=0, length = MOCK_DATA.length; i<length; i++) {
-        var data = MOCK_DATA[i],
-            row = rowsElm.eq(i);
-        expect($('td', row).eq(0).text().trim()).
-            toBe(data.telephone);
-        expect($('td', row).eq(1).text().trim()).
-            toBe(data.zip);
-        expect($('td', row).eq(2).text().trim()).
-            toBe(data.name);
-      }
+        var element = $compile(HTML_TEMPLATE)($scope);
+        $scope.$digest();
+
+        var rowsElm = $('tbody tr', element);
+        expect(rowsElm.length).toBe(10);
+
+        for (var i=0, length = MOCK_DATA.length; i<length; i++) {
+          var data = MOCK_DATA[i],
+              row = rowsElm.eq(i);
+
+          // verify text.
+          expect($('td', row).eq(0).text().trim()).
+              toBe(data.telephone);
+          expect($('td', row).eq(1).text().trim()).
+              toBe(data.zip);
+          expect($('td', row).eq(2).text().trim()).
+              toBe(data.name);
+
+          // verify classes
+          expect($('td', row).eq(0).hasClass('col-2')).
+              toBe(true);
+          expect($('td', row).eq(1).hasClass('col-3')).
+              toBe(true);
+          expect($('td', row).eq(2).hasClass('col-0')).
+              toBe(true);
+        }
+      });
     });
+
   });
 });
