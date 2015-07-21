@@ -6,13 +6,6 @@ describe('Grid layout', function() {
 
   beforeEach(module('mcc.directives.grid'));
 
-  // load the templates
-  beforeEach(module(
-      '../src/mcc-grid/mcc-grid.html',
-      '../src/mcc-grid/mcc-grid-body.html',
-      '../src/mcc-grid/mcc-grid-header.html',
-      '../src/mcc-grid/mcc-grid-footer.html'));
-
   // load test dependencies
   // ** The injector unwraps the underscores (_) from around the parameter names when matching
   beforeEach(inject(function(_$compile_, _$rootScope_){

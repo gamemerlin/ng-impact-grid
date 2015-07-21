@@ -204,7 +204,7 @@ mccGridModule.directive('mccGrid', function () {
       config: "=",
       gridData: "="
     },
-    templateUrl: '../src/mcc-grid/mcc-grid.html',
+    templateUrl: 'templates/mcc-grid/mcc-grid.html',
     replace: true,
     controller: MccGridController,
     controllerAs: 'GridCtrl'

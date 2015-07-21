@@ -1,47 +1,140 @@
 (function() {
 "use strict";
 
-// an empty container for mcc.directives.grid namespace.
-angular.module('mcc.directives.grid', []);
+// An empty module for directives.
+angular.module('mcc.components', [
+  'mcc.directives.grid',
+  'mcc.factory.dialog'
+]);
 
-// Grid features
-/**
- *
- * add pagination
- *  remote pagination
- *  remote sorting
- *  remote render
- *
- *
- * custom cell render
- *  column.template
- *  column.templateUrl
- *
- *
- * Tree data
- * tree: {
- *  childGetters: [(string|function)]
- * }
- *
- * highlight column group
- *
- * row selection handler
- * row select
+// grid module
+angular.module('mcc.directives.grid', ['mcc.directives.templates']);
 
- * sort
- * tree structure. Assume we have parent child relation already?
- * add class based on cell data condition
- * set column width
- * freeze columns / pinning panes
- *
- * Features implemented
- * bind to an object in the row
- * bind deep object to row
- * position fixed / floating headers
- * delete row
- * simple sort
- * custom css classes
- */
+// dialog module
+angular.module("mcc.factory.dialog", []);
+(function(module) {
+try {
+  module = angular.module('mcc.directives.templates');
+} catch (e) {
+  module = angular.module('mcc.directives.templates', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('templates/mcc-grid/mcc-grid-body.html',
+    '<div class="mcc-grid-body-container" ng-style="{\'height\': BodyCtrl.getHeight()}" ng-class="{\'can-scroll-x\': BodyCtrl.canScrollX(), \'can-scroll-y\': BodyCtrl.canScrollY()}">\n' +
+    '  <table>\n' +
+    '    <tbody>\n' +
+    '      <tr ng-repeat="row in GridCtrl.getViewPortRows()">\n' +
+    '        <td class="mcc-grid-td" ng-repeat="cell in row.getCells()"></td>\n' +
+    '        <td class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()">\n' +
+    '          <a href="" class="mcc-delete-row-btn" ng-click="row.deleteSelf(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"></a>\n' +
+    '        </td>\n' +
+    '      </tr>\n' +
+    '    </tbody>\n' +
+    '  </table>\n' +
+    '</div>');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('mcc.directives.templates');
+} catch (e) {
+  module = angular.module('mcc.directives.templates', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('templates/mcc-grid/mcc-grid-header.html',
+    '<!-- there is a bug in this version of angular that makes\n' +
+    '     impossible to use TABLE, TH, TR, TD as directive elements\n' +
+    '     to be replace in templates :( -->\n' +
+    '<thead>\n' +
+    '  <tr>\n' +
+    '      <th ng-repeat="column in HeaderCtrl.firstHeaderRow"\n' +
+    '          class="mcc-grid-th"\n' +
+    '          data-column="column">\n' +
+    '        {{ column.title }}\n' +
+    '      </th>\n' +
+    '      <th class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()" rowspan="{{ HeaderCtrl.getTotalRowSpan() }}">&nbsp;</th>\n' +
+    '  </tr>\n' +
+    '  <tr ng-if="HeaderCtrl.hasGroupedColumns">\n' +
+    '     <th class="mcc-grid-th"\n' +
+    '         ng-repeat="column in HeaderCtrl.secondHeaderRow"\n' +
+    '         data-column="column">{{ column.title }}</th>\n' +
+    '  </tr>\n' +
+    '</thead>\n' +
+    '');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('mcc.directives.templates');
+} catch (e) {
+  module = angular.module('mcc.directives.templates', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('templates/mcc-grid/mcc-grid-pagination.html',
+    '<div class="mcc-grid-pagination">\n' +
+    '  <div class="clearfix">\n' +
+    '    <div class="total-results">\n' +
+    '      <b class="ng-binding">{{ PaginationCtrl.getTotalCount() }}</b><span class="ng-binding"> Total Result(s)</span>\n' +
+    '    </div>\n' +
+    '    <div class="per-page">\n' +
+    '      <span class="ng-binding">Per page</span>\n' +
+    '      <ul>\n' +
+    '        <li ng-repeat="pageLength in PaginationCtrl.getPerPageSizes()">\n' +
+    '          <a href="" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="PaginationCtrl.setPageSize(pageLength)">{{ pageLength }}</a>\n' +
+    '        </li>\n' +
+    '      </ul>\n' +
+    '    </div>\n' +
+    '    <ul class="controls">\n' +
+    '      <li>\n' +
+    '        <button class="first fa fa-angle-double-left"\n' +
+    '            ng-click="PaginationCtrl.gotoFirstPage()"\n' +
+    '            ng-disabled="!PaginationCtrl.isFirstPageEnabled()"></button>\n' +
+    '      </li>\n' +
+    '      <li>\n' +
+    '        <button class="previous fa fa-angle-left"\n' +
+    '            ng-click="PaginationCtrl.gotoPrevPage()"\n' +
+    '            ng-disabled="!PaginationCtrl.isPrevPageEnabled()"> </button>\n' +
+    '      </li>\n' +
+    '      <li class="counter">\n' +
+    '        <form ng-submit="inputPage()">\n' +
+    '          <input ng-model="PaginationCtrl.getState().page" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span>\n' +
+    '        </form>\n' +
+    '      </li>\n' +
+    '      <li>\n' +
+    '        <button class="next fa fa-angle-right" ng-click="PaginationCtrl.gotoNextPage()"\n' +
+    '            ng-disabled="!PaginationCtrl.isNextPageEnabled()"> </button>\n' +
+    '      </li>\n' +
+    '      <li>\n' +
+    '        <button class="last fa fa-angle-double-right"\n' +
+    '            ng-click="PaginationCtrl.gotoLastPage()"\n' +
+    '            ng-disabled="!PaginationCtrl.isLastPageEnabled()"></button>\n' +
+    '      </li>\n' +
+    '    </ul>\n' +
+    '</div>\n' +
+    '</div>');
+}]);
+})();
+
+(function(module) {
+try {
+  module = angular.module('mcc.directives.templates');
+} catch (e) {
+  module = angular.module('mcc.directives.templates', []);
+}
+module.run(['$templateCache', function($templateCache) {
+  $templateCache.put('templates/mcc-grid/mcc-grid.html',
+    '<div class="mcc-grid-container">\n' +
+    '    <table class="mcc-grid-header"\n' +
+    '           data-column-defs="GridCtrl.getConfig().columns"\n' +
+    '           data-is-sticky="HeaderCtrl.isSticky()"></table>\n' +
+    '    <div mcc-grid-body></div>\n' +
+    '    <div mcc-grid-footer ng-if="GridCtrl.getConfig().pagination"></div>\n' +
+    '</div>');
+}]);
+})();
+
 var mccGridModule = angular.module('mcc.directives.grid');
 
 mccGridModule.directive('mccGridBody', function() {
@@ -139,7 +232,7 @@ mccGridModule.directive('mccGridBody', function() {
     replace: true,
     controller: MccGridBodyController,
     controllerAs: 'BodyCtrl',
-    templateUrl: '../src/mcc-grid/mcc-grid-body.html'
+    templateUrl: 'templates/mcc-grid/mcc-grid-body.html'
   }
 });
 
@@ -454,7 +547,7 @@ mccGridModule.directive('mccGridHeader', function () {
 
   return {
     restrict: 'C',
-    templateUrl: '../src/mcc-grid/mcc-grid-header.html',
+    templateUrl: 'templates/mcc-grid/mcc-grid-header.html',
     controller: MccGridHeaderController,
     controllerAs: 'HeaderCtrl'
   }
@@ -596,7 +689,7 @@ mccGridModule.directive('mccGridFooter', function() {
     replace: true,
     controller: MccGridPaginationController,
     controllerAs: 'PaginationCtrl',
-    templateUrl: '../src/mcc-grid/mcc-grid-pagination.html'
+    templateUrl: 'templates/mcc-grid/mcc-grid-pagination.html'
   }
 });
 
@@ -889,14 +982,14 @@ mccGridModule.directive('mccGrid', function () {
       config: "=",
       gridData: "="
     },
-    templateUrl: '../src/mcc-grid/mcc-grid.html',
+    templateUrl: 'templates/mcc-grid/mcc-grid.html',
     replace: true,
     controller: MccGridController,
     controllerAs: 'GridCtrl'
   }
 });
 
-var dialogModule = angular.module("mcc.components.dialog", []);
+var dialogModule = angular.module('mcc.factory.dialog');
 
 /**
  * A singleton service to create and manage the life

@@ -1,4 +1,4 @@
-var dialogModule = angular.module("mcc.components.dialog", []);
+var dialogModule = angular.module('mcc.factory.dialog');
 
 /**
  * A singleton service to create and manage the life

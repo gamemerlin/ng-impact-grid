@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Grid layout', function() {
+xdescribe('Grid layout', function() {
   var $compile;
   var $scope;
   var MccDialog;

@@ -167,7 +167,7 @@ mccGridModule.directive('mccGridHeader', function () {
 
   return {
     restrict: 'C',
-    templateUrl: '../src/mcc-grid/mcc-grid-header.html',
+    templateUrl: 'templates/mcc-grid/mcc-grid-header.html',
     controller: MccGridHeaderController,
     controllerAs: 'HeaderCtrl'
   }

@@ -95,6 +95,6 @@ mccGridModule.directive('mccGridBody', function() {
     replace: true,
     controller: MccGridBodyController,
     controllerAs: 'BodyCtrl',
-    templateUrl: '../src/mcc-grid/mcc-grid-body.html'
+    templateUrl: 'templates/mcc-grid/mcc-grid-body.html'
   }
 });
