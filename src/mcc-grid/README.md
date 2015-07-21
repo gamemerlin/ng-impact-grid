@@ -106,12 +106,12 @@ Example usage:
       <td>Object</td>
       <td>
           <p>A configuration for custom css classes for the column and header as follows:</p>
-          ```
+          <pre>
           css: {
             header: Array.&lt;(String),
             cell: Array.&lt;(String)
           }
-          ```
+          </pre>
           <p>css.header - adds the specified list of custom css classes to this header TH</p>
           <p>css.cell - adds the specified list of css classes to both the header TH and body TD</p>
       </td>
@@ -119,14 +119,20 @@ Example usage:
     <tr>
       <td>field</td>
       <td>No</td>
-      <td>(String|Function)</td>
+      <td>(String|{key: String, getter: Function, setter: Function})</td>
       <td>
-        <p>If string this is a key that maps to the row data.
-          If a function is provided it will be executed as a getter on the raw json data to retrieve deep data:</p>
+        <p>If string is provided, this is a key that maps to the row data field.
+          If a object is provided its getter will be executed on the raw json data to retrieve deep data. Its setter will be called to set data if rows are editable:</p>
           <pre>
-          field: function(data) {
-            return data.someProp1.someProp2.someValue;
-          }</pre>
+          field: {
+            key: 'SomeStringForInternalColumnReference',
+            getter(data) {
+              return data.someProp1.someProp2.someValue;
+            },
+            setter(data, value) {
+              data.some.deep.prop = value;
+            }
+          </pre>
       </td>
     </tr>
     <tr>
