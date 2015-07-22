@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Grid layout', function() {
+describe('Grid edit and save', function() {
   var $compile;
   var $scope;
 
@@ -25,7 +25,7 @@ describe('Grid layout', function() {
     telephoneColumnDef.template = '<input ng-model="cell.value">';
 
     var element = $compile(HTML_TEMPLATE)($scope);
-    $('body').append(element);
+
     $scope.$digest();
 
     var rowsElm = $('tbody tr', element);

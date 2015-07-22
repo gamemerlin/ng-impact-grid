@@ -53,15 +53,16 @@ var MOCK_CONFIG_GROUPED_HEADER = {
         cell: ['col-2']
       },
       title: 'Personal Info',
-      columns: [{
-        css: {
-          header: ['header-3'],
-          cell: ['col-3']
+      columns: [
+        {
+          css: {
+            header: ['header-3'],
+            cell: ['col-3']
+          },
+          field: 'telephone',
+          isSortable: true,
+          title: 'Phone'
         },
-        field: 'telephone',
-        isSortable: true,
-        title: 'Phone'
-      },
         {
           css: {
             header: ['header-4'],

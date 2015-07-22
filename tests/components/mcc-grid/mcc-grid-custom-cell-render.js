@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Grid layout', function() {
+describe('Grid custom cell template', function() {
   var $compile;
   var $scope;
 
