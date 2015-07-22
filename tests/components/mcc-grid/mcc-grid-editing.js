@@ -11,15 +11,13 @@ describe('Grid layout', function() {
   beforeEach(inject(function(_$compile_, _$rootScope_){
     $compile = _$compile_;
     $scope = _$rootScope_.$new();
+
+    $scope.gridData = angular.copy(MOCK_DATA);
+    $scope.gridConfig = angular.copy(MOCK_CONFIG);
   }));
 
   var HTML_TEMPLATE = '<mcc-grid ' +
       'data-grid-data="gridData" data-config="gridConfig"></mcc-grid>';
-
-  beforeEach(inject(function(_$compile_, _$rootScope_){
-    $scope.gridData = angular.copy(MOCK_DATA);
-    $scope.gridConfig = angular.copy(MOCK_CONFIG);
-  }));
 
   it('should edit a cell value using a custom renderer', function() {
     var telephoneColumnDef = $scope.gridConfig.columns[1];
