@@ -213,7 +213,15 @@ Example usage:
       <td>
           A hook to extend the row view model. You can edit properties and functions here. A use case would be to extend functionality for delete,
           in which case you may need to add flags for canIEdit, isDeletePending and the actually hook to your app to delete. Assumes you will pass
-          a custom template to a cell to take advantage of your extension.
+          a custom template to a cell to take advantage of your extension. In the example above we are defining a custom delete handler and properties to set delete state. We would take advantage of this by creating a cell template / directive to take advantage of this like so:
+          <p>
+            <pre>
+            {
+              field: 'custom-delete',
+              template: '<a href="" ng-disabled="!row.canEdit(row)" ng-click="row.deleteRow(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"></a>'
+            }
+            </pre>
+          </p>
       </td>
     </tr>
   </tbody>
