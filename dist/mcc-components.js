@@ -25,9 +25,6 @@ module.run(['$templateCache', function($templateCache) {
     '    <tbody>\n' +
     '      <tr ng-repeat="row in GridCtrl.getViewPortRows()">\n' +
     '        <td class="mcc-grid-td" ng-repeat="cell in row.getCells()"></td>\n' +
-    '        <td class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()">\n' +
-    '          <a href="" class="mcc-delete-row-btn" ng-click="row.deleteSelf(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"></a>\n' +
-    '        </td>\n' +
     '      </tr>\n' +
     '    </tbody>\n' +
     '  </table>\n' +
@@ -53,7 +50,6 @@ module.run(['$templateCache', function($templateCache) {
     '          data-column="column">\n' +
     '        {{ column.title }}\n' +
     '      </th>\n' +
-    '      <th class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()" rowspan="{{ HeaderCtrl.getTotalRowSpan() }}">&nbsp;</th>\n' +
     '  </tr>\n' +
     '  <tr ng-if="HeaderCtrl.hasGroupedColumns">\n' +
     '     <th class="mcc-grid-th"\n' +
@@ -280,6 +276,11 @@ mccGridModule.factory('CellModel', function(){
     this.row_ = row;
     this.template = columnDef.template;
 
+    if (!columnDef.field) {
+      throw new Error('Cell cannot be rendered because ' +
+          'it does not have a \'field\' defined.')
+    }
+
     this.value = columnDef.field.getter ?
         columnDef.field.getter(row.getData()) : row.getData()[this.field];
 
@@ -331,14 +332,9 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
     this.data_ = rowData;
     this.cells_ = [];
     this.isEditPending = false;
-    // Passing canEdit from the application to the model.
-    if (rowConfig && rowConfig.canEdit) {
-      this.canEdit = rowConfig.canEdit;
-    }
 
-    // Passing delete handler from the application to the model.
-    if (rowConfig && rowConfig.deleteHandler) {
-      this.deleteSelf = rowConfig.deleteHandler;
+    if (rowConfig && rowConfig.extension) {
+      angular.extend(this, rowConfig.extension);
     }
 
     for (var i = 0, length = flattenedColumns.length; i < length; i++) {
@@ -380,171 +376,162 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
 }]);
 var mccGridModule = angular.module('mcc.directives.grid');
 
+function MccGridHeaderController($scope, $element, $window, domUtils) {
+  this.scope_ = $scope;
+  this.element_ = $element;
+  this.window_ = $window;
+  this.domUtils_ = domUtils;
+
+  this.firstHeaderRow = [];
+  this.secondHeaderRow = [];
+  this.hasGroupedColumns = false;
+
+  $scope.$watch(
+      'GridCtrl.getConfig().columns',
+      angular.bind(this, function (oldDefs, newDefs) {
+        if (newDefs && newDefs.length) {
+          this.buildHeader_(newDefs);
+        }}));
+
+
+  /**
+   * TODO: Inject sticky header service
+   * If isSticky window.onscroll service handler.
+   */
+  $scope.$watch(
+      'GridCtrl.getConfig().header.isSticky',
+      angular.bind(this, function (oldIsSticky, newIsSticky) {
+        if (newIsSticky) {
+          this.bindWindowScrollForStickyHeaders_(this.element_)
+        }}));
+}
+MccGridHeaderController.$inject = ['$scope', '$element', '$window', 'domUtils'];
+
+/**
+ * Builds the column header out. Inspects the columnDefs to check
+ * if we have column groups that need to be separated out between
+ * the first or second rows.
+ *
+ * @param newDefs
+ * @private
+ */
+MccGridHeaderController.prototype.buildHeader_ = function (columnDefs) {
+  this.hasGroupedColumns = this.scanForGroupedColumns_(columnDefs);
+  if (this.hasGroupedColumns) {
+    this.setFirstTrRowSpans_(this.firstHeaderRow);
+  }
+};
+
+/**
+ * * Does a pass on all the column defs to see if we have grouped columns.
+ * If we do then we call a method to set the correct rowspans.
+ * @param columnDefs
+ * @returns {boolean} Whether this header has grouped columns
+ * @private
+ */
+MccGridHeaderController.prototype.scanForGroupedColumns_ = function (columnDefs) {
+  var columnIndex = 0;
+
+  for (var i = 0, length = columnDefs.length; i < length; i++) {
+    var columnDef = columnDefs[i],
+        isColumnGroup = columnDef.columns && columnDef.columns.length;
+
+    if (!isColumnGroup) {
+      // Set column index for first cell
+      columnDefs[i].columnIndex = columnIndex;
+      columnIndex++;
+    }
+
+    // Push this column header into the first row.
+    this.firstHeaderRow.push(columnDefs[i]);
+
+    if (isColumnGroup) {
+      columnDef.colSpan = columnDef.columns.length;
+      for (var j = 0, gLength = columnDef.columns.length; j < gLength; j++) {
+        // Set column index
+        columnDef.columns[j].columnIndex = columnIndex;
+        columnIndex++;
+
+        this.secondHeaderRow.push(columnDef.columns[j]);
+      }
+    }
+  }
+
+  return this.secondHeaderRow.length;
+};
+
+/**
+ * Sets row spans for the first row fo the table headers.
+ * @param firstHeaderRows - First row of cells for table header.
+ * @private
+ */
+MccGridHeaderController.prototype.setFirstTrRowSpans_ = function (firstHeaderRows) {
+  var HEADER_ROW_SPAN = 2;
+
+  for (var i = 0, length = firstHeaderRows.length; i < length; i++) {
+    if (!firstHeaderRows[i].columns) {
+      firstHeaderRows[i].rowSpan = HEADER_ROW_SPAN;
+    }
+  }
+};
+
+/**
+ * @returns {boolean} Whether the header is sticky.
+ */
+MccGridHeaderController.prototype.isSticky = function() {
+  return this.scope_.GridCtrl.getConfig().header.isSticky;
+};
+
+/**
+ * @private
+ */
+MccGridHeaderController.prototype.bindWindowScrollForStickyHeaders_ = function () {
+  angular.element(this.window_).bind('scroll',
+      angular.bind(this, this.handleWindowScrollForStickyHeaders_));
+};
+
+MccGridHeaderController.prototype.handleWindowScrollForStickyHeaders_ = function () {
+  var header = angular.element(this.element_),
+      tableBody,
+      gridContainer = header.parent(),
+      headerScrollTop = this.element_[0].getBoundingClientRect().top;
+
+  var isWindowPastHeader = this.domUtils_.scrollTop() > headerScrollTop;
+
+  if (!tableBody) {
+    tableBody = header.next().find('table');
+  }
+
+  var tableBodyRows = tableBody.find('tr'),
+      lastRow = tableBodyRows[tableBodyRows.length - 1],
+      lastRowOffsetTop = this.domUtils_.getOffsetFor(lastRow);
+
+  if (isWindowPastHeader) {
+    gridContainer.css('padding-top', header[0].offsetHeight + 'px');
+    header.css({
+      'position': 'fixed',
+      'top': 0,
+      'width': tableBody[0].offsetWidth
+    });
+
+    if (this.domUtils_.scrollTop() > lastRowOffsetTop - header[0].offsetHeight) {
+      header.css('display', 'none');
+    } else {
+      header.css('display', '');
+    }
+  } else {
+    header.css({
+      'display': '',
+      'position': '',
+      'top': '',
+      'width': ''
+    });
+    header.css('width', '');
+    gridContainer.css('padding-top', '');
+  }
+};
 
 mccGridModule.directive('mccGridHeader', function () {
-  function MccGridHeaderController($scope, $element, $window, domUtils) {
-    this.scope_ = $scope;
-    this.element_ = $element;
-    this.window_ = $window;
-    this.domUtils_ = domUtils;
-
-    this.firstHeaderRow = [];
-    this.secondHeaderRow = [];
-    this.hasGroupedColumns = false;
-
-    $scope.$watch(
-        'GridCtrl.getConfig().columns',
-         angular.bind(this, function (oldDefs, newDefs) {
-          if (newDefs && newDefs.length) {
-            this.buildHeader_(newDefs);
-          }}));
-
-
-    /**
-     * TODO: Inject sticky header service
-     * If isSticky window.onscroll service handler.
-     */
-    $scope.$watch(
-        'GridCtrl.getConfig().header.isSticky',
-        angular.bind(this, function (oldIsSticky, newIsSticky) {
-          if (newIsSticky) {
-            this.bindWindowScrollForStickyHeaders_(this.element_)
-          }}));
-  }
-  MccGridHeaderController.$inject = ['$scope', '$element', '$window', 'domUtils'];
-
-  /**
-   * * Builds the column header out. Inspects the columnDefs to check
-   * if we have column groups that need to be separated out between
-   * the first or second rows.
-   *
-   * @param newDefs
-   * @private
-   */
-  MccGridHeaderController.prototype.buildHeader_ = function (columnDefs) {
-    this.hasGroupedColumns = this.scanForGroupedColumns_(columnDefs);
-    if (this.hasGroupedColumns) {
-      this.setRowSpans_(this.firstHeaderRow);
-    }
-  };
-
-  /**
-   * * Does a pass on all the column defs to see if we have grouped columns.
-   * If we do then we call a method to set the correct rowspans.
-   * @param columnDefs
-   * @returns {boolean} Whether this header has grouped columns
-   * @private
-   */
-  MccGridHeaderController.prototype.scanForGroupedColumns_ = function (columnDefs) {
-    var columnIndex = 0;
-
-    for (var i = 0, length = columnDefs.length; i < length; i++) {
-      var columnDef = columnDefs[i],
-          isColumnGroup = columnDef.columns && columnDef.columns.length;
-
-      if (!isColumnGroup) {
-        // Set column index for first cell
-        columnDefs[i].columnIndex = columnIndex;
-        columnIndex++;
-      }
-
-      // Push this column header into the first row.
-      this.firstHeaderRow.push(columnDefs[i]);
-
-      if (isColumnGroup) {
-        columnDef.colSpan = columnDef.columns.length;
-        for (var j = 0, gLength = columnDef.columns.length; j < gLength; j++) {
-          // Set column index
-          columnDef.columns[j].columnIndex = columnIndex;
-          columnIndex++;
-
-          this.secondHeaderRow.push(columnDef.columns[j]);
-        }
-      }
-    }
-
-    return this.secondHeaderRow.length;
-  };
-
-  /**
-   * Sets row spans for the first row fo the table headers.
-   * @param firstHeaderRows - First row of cells for table header.
-   * @private
-   */
-  MccGridHeaderController.prototype.setRowSpans_ = function (firstHeaderRows) {
-    var HEADER_ROW_SPAN = 2;
-
-    for (var i = 0, length = firstHeaderRows.length; i < length; i++) {
-      if (firstHeaderRows[i].colSpan === undefined) {
-        firstHeaderRows[i].rowSpan = HEADER_ROW_SPAN;
-      }
-    }
-  };
-
-  /**
-   * @returns {number} The rowspan for empty place holder headers
-   *     for delete and selection columns.
-   */
-  MccGridHeaderController.prototype.getTotalRowSpan = function() {
-    return this.secondHeaderRow.length ? 2 : 1;
-  };
-
-  /**
-   * @returns {boolean} Whether the header is sticky.
-   */
-  MccGridHeaderController.prototype.isSticky = function() {
-    return this.scope_.GridCtrl.getConfig().header.isSticky;
-  };
-
-  /**
-   * @private
-   */
-  MccGridHeaderController.prototype.bindWindowScrollForStickyHeaders_ = function () {
-    angular.element(this.window_).bind('scroll',
-        angular.bind(this, this.handleWindowScrollForStickyHeaders_));
-  };
-
-  MccGridHeaderController.prototype.handleWindowScrollForStickyHeaders_ = function () {
-    var header = angular.element(this.element_),
-        tableBody,
-        gridContainer = header.parent(),
-        headerScrollTop = this.element_[0].getBoundingClientRect().top;
-
-    var isWindowPastHeader = this.domUtils_.scrollTop() > headerScrollTop;
-
-    if (!tableBody) {
-      tableBody = header.next().find('table');
-    }
-
-    var tableBodyRows = tableBody.find('tr'),
-        lastRow = tableBodyRows[tableBodyRows.length - 1],
-        lastRowOffsetTop = this.domUtils_.getOffsetFor(lastRow);
-
-    if (isWindowPastHeader) {
-      gridContainer.css('padding-top', header[0].offsetHeight + 'px');
-      header.css({
-        'position': 'fixed',
-        'top': 0,
-        'width': tableBody[0].offsetWidth
-      });
-
-      if (this.domUtils_.scrollTop() > lastRowOffsetTop - header[0].offsetHeight) {
-        header.css('display', 'none');
-      } else {
-        header.css('display', '');
-      }
-    } else {
-      header.css({
-        'display': '',
-        'position': '',
-        'top': '',
-        'width': ''
-      });
-      header.css('width', '');
-      gridContainer.css('padding-top', '');
-    }
-  };
-
   return {
     restrict: 'C',
     templateUrl: 'templates/mcc-grid/mcc-grid-header.html',
@@ -702,8 +689,11 @@ mccGridModule.directive('mccGridTd', ['$compile', function($compile) {
       // Add custom css class during link. These classes
       // are not dynamic, we are adding at link time to avoid
       // an ng-class binding on each cell.
-      if (scope.GridCtrl.cellCssClasses[scope.cell.field]) {
-        element.addClass(scope.GridCtrl.cellCssClasses[scope.cell.field].join(' '));
+      var cellCssClasses =
+          scope.GridCtrl.cellCssClasses[scope.cell.field.key || scope.cell.field];
+
+      if (cellCssClasses && cellCssClasses.length) {
+        element.addClass(cellCssClasses.join(' '));
       }
 
       var defaultCellTemplate = '<span ng-bind="cell.value"></span>',
@@ -747,6 +737,7 @@ mccGridModule.directive('mccGridTh', function() {
 
     if (column.colSpan) {
       element.attr('colspan', column.colSpan);
+      console.log('should set colspan for  ', column)
     }
   };
 
@@ -761,9 +752,16 @@ mccGridModule.directive('mccGridTh', function() {
       // Set row and colspan
       scope.ThCtrl.setRowAndColSpans_(element, scope.column);
 
-      if (scope.column.css) {
-        element.addClass(scope.column.css.header.join(' '));
-        element.addClass(scope.column.css.cell.join(' '));
+      var cssConfigs = scope.column.css;
+
+      if (cssConfigs) {
+        if (cssConfigs.header && cssConfigs.header.length) {
+          element.addClass(cssConfigs.header.join(' '));
+        }
+
+        if (cssConfigs.cell && cssConfigs.cell.length) {
+          element.addClass(cssConfigs.cell.join(' '));
+        }
       }
 
       // Hook up column sorting if available.
@@ -819,7 +817,7 @@ mccGridModule.directive('mccGrid', function () {
             function (oldCanRenderRows, newCanRenderRows) {
               if (newCanRenderRows) {
                 this.buildTableRows_(
-                    $scope.gridData, this.flattenedColumns_, $scope.config.rows);
+                    $scope.gridData, this.flattenedColumns_, $scope.config.row);
               }
             }));
 
@@ -856,7 +854,6 @@ mccGridModule.directive('mccGrid', function () {
    * the custom css settings for headers and cells.
    *
    * @param gridConfig - the grid's configuration definition.
-   * @returns {Array} An array of keys which represent the field ordering.
    * @private
    */
   MccGridController.prototype.setFlattendedColumns_ = function (gridConfig) {
@@ -964,16 +961,6 @@ mccGridModule.directive('mccGrid', function () {
           return row.data_[column.field];
         },
         !column.isSortedAsc);
-  };
-
-  /**
-   * @returns {boolean} We should show the delete column.
-   */
-  MccGridController.prototype.shouldShowRowDelete = function () {
-    var rowConfig = this.getConfig().rows;
-
-    return Boolean(rowConfig && rowConfig.canEdit &&
-        rowConfig.canEdit() && rowConfig.deleteHandler);
   };
 
   return {

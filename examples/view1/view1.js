@@ -74,6 +74,13 @@ angular.module('myApp.view1', ['ngRoute'])
         isSortable: true,
         title: 'Account Code'
       },
+      {
+        field: 'delete',
+        css: {
+          cell: ['mcc-delete-cell']
+        },
+        template: '<a href="" class="mcc-delete-row-btn" ng-disabled="!row.canEdit(row)" ng-click="row.deleteRow(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"></a>'
+      }
     ],
     header: {
       isSticky: true
@@ -84,12 +91,16 @@ angular.module('myApp.view1', ['ngRoute'])
       perPage: 5,
       totalCount: 12
     },
-    rows: {
-      canEdit: function(item) {
-        return $scope.canIDeleteThis(item);
-      },
-      deleteHandler: function(item) {
-        $scope.deleteItemFromController(item)
+    row: {
+      extension: {
+        deleteInProgress: false,
+        canEdit: function(row) {
+          return $scope.canIDeleteThis(row);
+        },
+        deleteRow: function(row) {
+          row.deleteInProgress = true;
+          $scope.deleteItemFromController(row)
+        }
       }
     },
     table: {

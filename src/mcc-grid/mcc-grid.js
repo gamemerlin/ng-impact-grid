@@ -41,7 +41,7 @@ mccGridModule.directive('mccGrid', function () {
             function (oldCanRenderRows, newCanRenderRows) {
               if (newCanRenderRows) {
                 this.buildTableRows_(
-                    $scope.gridData, this.flattenedColumns_, $scope.config.rows);
+                    $scope.gridData, this.flattenedColumns_, $scope.config.row);
               }
             }));
 
@@ -78,7 +78,6 @@ mccGridModule.directive('mccGrid', function () {
    * the custom css settings for headers and cells.
    *
    * @param gridConfig - the grid's configuration definition.
-   * @returns {Array} An array of keys which represent the field ordering.
    * @private
    */
   MccGridController.prototype.setFlattendedColumns_ = function (gridConfig) {
@@ -186,16 +185,6 @@ mccGridModule.directive('mccGrid', function () {
           return row.data_[column.field];
         },
         !column.isSortedAsc);
-  };
-
-  /**
-   * @returns {boolean} We should show the delete column.
-   */
-  MccGridController.prototype.shouldShowRowDelete = function () {
-    var rowConfig = this.getConfig().rows;
-
-    return Boolean(rowConfig && rowConfig.canEdit &&
-        rowConfig.canEdit() && rowConfig.deleteHandler);
   };
 
   return {

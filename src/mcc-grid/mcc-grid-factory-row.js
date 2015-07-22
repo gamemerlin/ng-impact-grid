@@ -17,14 +17,9 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
     this.data_ = rowData;
     this.cells_ = [];
     this.isEditPending = false;
-    // Passing canEdit from the application to the model.
-    if (rowConfig && rowConfig.canEdit) {
-      this.canEdit = rowConfig.canEdit;
-    }
 
-    // Passing delete handler from the application to the model.
-    if (rowConfig && rowConfig.deleteHandler) {
-      this.deleteSelf = rowConfig.deleteHandler;
+    if (rowConfig && rowConfig.extension) {
+      angular.extend(this, rowConfig.extension);
     }
 
     for (var i = 0, length = flattenedColumns.length; i < length; i++) {

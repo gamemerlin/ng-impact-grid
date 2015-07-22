@@ -11,9 +11,6 @@ module.run(['$templateCache', function($templateCache) {
     '    <tbody>\n' +
     '      <tr ng-repeat="row in GridCtrl.getViewPortRows()">\n' +
     '        <td class="mcc-grid-td" ng-repeat="cell in row.getCells()"></td>\n' +
-    '        <td class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()">\n' +
-    '          <a href="" class="mcc-delete-row-btn" ng-click="row.deleteSelf(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"></a>\n' +
-    '        </td>\n' +
     '      </tr>\n' +
     '    </tbody>\n' +
     '  </table>\n' +
@@ -39,7 +36,6 @@ module.run(['$templateCache', function($templateCache) {
     '          data-column="column">\n' +
     '        {{ column.title }}\n' +
     '      </th>\n' +
-    '      <th class="mcc-delete-cell" ng-if="GridCtrl.shouldShowRowDelete()" rowspan="{{ HeaderCtrl.getTotalRowSpan() }}">&nbsp;</th>\n' +
     '  </tr>\n' +
     '  <tr ng-if="HeaderCtrl.hasGroupedColumns">\n' +
     '     <th class="mcc-grid-th"\n' +

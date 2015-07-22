@@ -54,7 +54,7 @@ To configure your grid, in your applications controller define a bindable grid c
       <td>The configuration for the header.</td>
     </tr>
     <tr>
-      <td>rows</td>
+      <td>row</td>
       <td>No</td>
       <td><a href="#row-definition">Object</a></td>
       <td>The row configurations for this grid.</td>
@@ -183,12 +183,16 @@ Example usage:
 Example usage:
 ```
     $scope.AppCtrl.gridConfig.rows: {
-      canEdit: function(Row) {
-        return $scope.canIDeleteThis(Row);
-      },
-      deleteHandler: function(Row) {
-        $scope.deleteItemFromController(Row)
-      }
+     extends: {
+             deleteInProgress: false,
+             canEdit: function(row) {
+               return $scope.canIDeleteThis(row);
+             },
+             deleteRow: function(row) {
+               row.deleteInProgress = true;
+               $scope.deleteItemFromController(row)
+             }
+           }
     };
 ```
 
@@ -203,19 +207,13 @@ Example usage:
   </thead>
   <tbody>
     <tr>
-      <td>canEdit</td>
+      <td>extension</td>
       <td>No</td>
-      <td>Function</td>
+      <td>Object</td>
       <td>
-          A application handler to determine whether the user can edit this row. Takes as an argument the <a href="#row-model-api">Row model</a> from the grid.
-      </td>
-    </tr>
-    <tr>
-      <td>deleteHandler</td>
-      <td>No</td>
-      <td>Function</td>
-      <td>
-          An application delete handler to delete this row. Takes as an argument the <a href="#row-model-api">Row model</a> from the grid.
+          A hook to extend the row view model. You can edit properties and functions here. A use case would be to extend functionality for delete,
+          in which case you may need to add flags for canIEdit, isDeletePending and the actually hook to your app to delete. Assumes you will pass
+          a custom template to a cell to take advantage of your extension.
       </td>
     </tr>
   </tbody>

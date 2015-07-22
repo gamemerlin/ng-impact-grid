@@ -16,6 +16,11 @@ mccGridModule.factory('CellModel', function(){
     this.row_ = row;
     this.template = columnDef.template;
 
+    if (!columnDef.field) {
+      throw new Error('Cell cannot be rendered because ' +
+          'it does not have a \'field\' defined.')
+    }
+
     this.value = columnDef.field.getter ?
         columnDef.field.getter(row.getData()) : row.getData()[this.field];
 
