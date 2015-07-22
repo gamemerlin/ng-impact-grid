@@ -183,7 +183,7 @@ Example usage:
 Example usage:
 ```
     $scope.AppCtrl.gridConfig.rows: {
-     extends: {
+     extension: {
              deleteInProgress: false,
              canEdit: function(row) {
                return $scope.canIDeleteThis(row);
