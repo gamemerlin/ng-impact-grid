@@ -146,11 +146,14 @@ describe('Grid sorting', function() {
     });
   });
 
-  //it('should sort ascending with pagination', function() {
-  //  expect(true).toBe(false);
-  //});
-  //
-  //it('should sort decending with pagination', function() {
-  //  expect(true).toBe(false);
-  //});
+
+  xdescribe('with pagination', function() {
+    it('should sort ascending with pagination', function() {
+      expect(true).toBe(false);
+    });
+
+    it('should sort decending with pagination', function() {
+      expect(true).toBe(false);
+    });
+  });
 });
