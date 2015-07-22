@@ -225,6 +225,9 @@ Example usage:
 }
 </pre>
           </p>
+          <p>
+            <sup><b>*</b></sup> If passing a handler try to pass a static reference to a named function or prototype function.
+          </p>
       </td>
     </tr>
   </tbody>
