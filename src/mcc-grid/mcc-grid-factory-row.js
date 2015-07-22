@@ -18,8 +18,8 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
     this.cells_ = [];
     this.isEditPending = false;
 
-    if (rowConfig && rowConfig.extension) {
-      angular.extend(this, rowConfig.extension);
+    if (rowConfig && rowConfig.rowApi) {
+      angular.extend(this, rowConfig.rowApi);
     }
 
     for (var i = 0, length = flattenedColumns.length; i < length; i++) {

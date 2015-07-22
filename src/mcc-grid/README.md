@@ -183,7 +183,7 @@ Example usage:
 Example usage:
 ```
     $scope.AppCtrl.gridConfig.rows: {
-     extension: {
+     rowApi: {
              deleteInProgress: false,
              canEdit: function(row) {
                return $scope.canIDeleteThis(row);
@@ -207,7 +207,7 @@ Example usage:
   </thead>
   <tbody>
     <tr>
-      <td>extension</td>
+      <td>rowApi</td>
       <td>No</td>
       <td>Object</td>
       <td>

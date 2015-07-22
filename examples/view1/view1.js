@@ -92,7 +92,7 @@ angular.module('myApp.view1', ['ngRoute'])
       totalCount: 12
     },
     row: {
-      extension: {
+      rowApi: {
         deleteInProgress: false,
         canEdit: function(row) {
           return $scope.canIDeleteThis(row);
