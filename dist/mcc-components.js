@@ -737,7 +737,6 @@ mccGridModule.directive('mccGridTh', function() {
 
     if (column.colSpan) {
       element.attr('colspan', column.colSpan);
-      console.log('should set colspan for  ', column)
     }
   };
 

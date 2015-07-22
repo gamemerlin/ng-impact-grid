@@ -134,21 +134,33 @@ describe('Grid layout', function() {
         expect(firstRowHeaders.eq(0).text().trim()).toBe('Id');
         expect(firstRowHeaders.eq(0).hasClass('col-0')).toBe(true);
         expect(firstRowHeaders.eq(0).hasClass('header-0')).toBe(true);
+        expect(firstRowHeaders.eq(0).attr('colspan')).toBeUndefined();
+        expect(firstRowHeaders.eq(0).attr('rowspan')).toBe('2');
+
         expect(firstRowHeaders.eq(1).text().trim()).toBe('Name');
         expect(firstRowHeaders.eq(1).hasClass('col-1')).toBe(true);
         expect(firstRowHeaders.eq(1).hasClass('header-1')).toBe(true);
+        expect(firstRowHeaders.eq(1).attr('colspan')).toBeUndefined();
+        expect(firstRowHeaders.eq(1).attr('rowspan')).toBe('2');
+
         expect(firstRowHeaders.eq(2).text().trim()).toBe('Personal Info');
         expect(firstRowHeaders.eq(2).hasClass('col-2')).toBe(true);
         expect(firstRowHeaders.eq(2).hasClass('header-2')).toBe(true);
+        expect(firstRowHeaders.eq(2).attr('colspan')).toBe('2');
+        expect(firstRowHeaders.eq(2).attr('rowspan')).toBeUndefined();
 
         var secondRowHeaders = header.find('tr:eq(1)').find('th');
         expect(secondRowHeaders.length).toBe(2);
         expect(secondRowHeaders.eq(0).text().trim()).toBe('Phone');
         expect(secondRowHeaders.eq(0).hasClass('col-3')).toBe(true);
         expect(secondRowHeaders.eq(0).hasClass('header-3')).toBe(true);
+        expect(secondRowHeaders.eq(0).attr('rowspan')).toBeUndefined();
+        expect(secondRowHeaders.eq(0).attr('colspan')).toBeUndefined();
         expect(secondRowHeaders.eq(1).text().trim()).toBe('Zip');
         expect(secondRowHeaders.eq(1).hasClass('col-4')).toBe(true);
         expect(secondRowHeaders.eq(1).hasClass('header-4')).toBe(true);
+        expect(secondRowHeaders.eq(1).attr('rowspan')).toBeUndefined();
+        expect(secondRowHeaders.eq(1).attr('colspan')).toBeUndefined();
       });
     });
 
