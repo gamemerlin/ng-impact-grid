@@ -218,7 +218,7 @@ Example usage:
             <pre>
             {
               field: 'custom-delete',
-              template: '<a href="" ng-disabled="!row.canEdit(row)" ng-click="row.deleteRow(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"></a>'
+              template: '&lt;a href="" ng-disabled="!row.canEdit(row)" ng-click="row.deleteRow(row)" ng-class="{\'delete-in-progress\': row.deleteInProgress }"&gt;&lt;/a&gt;'
             }
             </pre>
           </p>
