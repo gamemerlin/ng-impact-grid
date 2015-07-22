@@ -52,8 +52,9 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
 
       if (cell.isEditPending) {
         cell.save();
-        cell.isEditPending = false;
       }
+
+      this.isEditPending = false;
     }
   };
 

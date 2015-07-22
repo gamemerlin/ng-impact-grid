@@ -18,14 +18,9 @@ describe('Grid layout', function() {
 
   describe('Mcc grid bindings and basic rendering', function(){
     beforeEach(inject(function(_$compile_, _$rootScope_){
-      $scope.gridData = MOCK_DATA;
-      $scope.gridConfig = MOCK_CONFIG;
+      $scope.gridData = angular.copy(MOCK_DATA);
+      $scope.gridConfig = angular.copy(MOCK_CONFIG);
     }));
-
-    afterEach(function() {
-      $scope.gridData = MOCK_DATA;
-      $scope.gridConfig = MOCK_CONFIG;
-    });
 
     describe('rendering the header', function() {
       it('should render a header', function() {

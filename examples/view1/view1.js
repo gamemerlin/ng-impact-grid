@@ -18,6 +18,8 @@ angular.module('myApp.view1', ['ngRoute'])
     return true;
   };
 
+  $scope.gridApi;
+
   $scope.gridConfig = {
     columns: [
       {

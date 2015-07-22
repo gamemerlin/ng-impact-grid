@@ -10,9 +10,38 @@ To use render and mcc grid component, set up a grid configuration and pass in a 
 
 It is assumed that your data is a list of JSON objects. The following section explains the grid configuration options.
 
+## Mcc Grid Directive attributes
+
+<table>
+  <thead>
+    <tr>
+      <th width="100">Attribute</th>
+      <th>Required?</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>data-config</td>
+      <td>Yes</td>
+      <td>A grid configuration object.</td>
+    </tr>
+    <tr>
+      <td>data-grid-data</td>
+      <td>Yes</td>
+      <td>The data to bind to. Expects an array of json objects.</td>
+    </tr>
+    <tr>
+      <td>grid-api</td>
+      <td>No</td>
+      <td>An app scope member through which the grid controller api can be exported to.</td>
+    </tr>
+  </tbody>
+</table>
+
 ## Mcc Grid Configuration API
 
-####Mcc Grid Top Level properties
+####Mcc Grid Config top level properties
 
 To configure your grid, in your applications controller define a bindable grid configuration object on scope or controller as follows:
 
@@ -24,12 +53,6 @@ To configure your grid, in your applications controller define a bindable grid c
       table: {...}
     }
 ```
-
-<style type="text/css">
-  td {
-    vertical-align: top;
-  }
-</style>
 
 <table>
   <thead>
