@@ -1,7 +1,7 @@
 {
   "name": "ng-impact-grid",
   "description": "A ui component library written in angular",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": [
     "dist/mcc-components.js",
     "dist/lib.css"
