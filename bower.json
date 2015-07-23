@@ -1,8 +1,12 @@
 {
-  "name": "angular-seed",
-  "description": "A starter project for AngularJS",
+  "name": "ng-impact-grid",
+  "description": "A ui component library written in angular",
   "version": "0.0.0",
-  "homepage": "https://github.com/angular/angular-seed",
+  "main": [
+    "dist/mcc-components.js",
+    "dist/lib.css"
+  ],
+  "homepage": "https://github.com/gamemerlin/ng-impact-grid",
   "license": "MIT",
   "private": true,
   "dependencies": {
