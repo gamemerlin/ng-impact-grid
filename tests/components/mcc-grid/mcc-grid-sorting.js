@@ -146,7 +146,6 @@ describe('Grid sorting', function() {
     });
   });
 
-
   xdescribe('with pagination', function() {
     it('should sort ascending with pagination', function() {
       expect(true).toBe(false);
