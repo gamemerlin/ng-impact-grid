@@ -1,7 +1,7 @@
 {
   "name": "ng-impact-grid",
   "description": "A ui component library written in angular",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": [
     "dist/mcc-components.js",
     "dist/lib.css"
@@ -27,6 +27,7 @@
     "angular-loader": "~1.4.0",
     "angular-mocks": "~1.4.0",
     "html5-boilerplate": "~5.2.0",
-    "jquery": "~1.8"
+    "jquery": "~1.8",
+    "ng-impact-grid": "https://github.com/gamemerlin/ng-impact-grid"
   }
 }
