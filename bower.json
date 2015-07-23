@@ -1,22 +1,23 @@
 {
   "name": "ng-impact-grid",
   "description": "A ui component library written in angular",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": [
     "dist/mcc-components.js",
     "dist/lib.css"
   ],
   "ignore": [
     "bower.json",
-    "contributors.text",
+    "contributors.txt",
     "dist-prefix.js",
     "dist-suffix.js",
-    "examples.js",
+    "examples/**/.*",
     "gulpfile.js",
     "karma.conf.js",
-    "license.js",
+    "LICENSE",
+    "README.md",
     "package.json",
-    "src"
+    "src/**/.*"
   ],
   "homepage": "https://github.com/gamemerlin/ng-impact-grid",
   "license": "MIT",
