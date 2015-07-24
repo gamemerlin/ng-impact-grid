@@ -50,12 +50,7 @@ mccGridModule.directive('mccGridFooter', function() {
       return this.getState().totalCount;
     }
 
-    // Local pagination.
-    if (!this.getState().totalCount) {
-      this.getState().totalCount = this.scope_.GridCtrl.getAllRows().length;
-    }
-
-    return this.getState().totalCount;
+    return this.getState().totalCount = this.scope_.GridCtrl.getAllRows().length;
   };
 
   MccGridPaginationController.prototype.getPerPage = function() {

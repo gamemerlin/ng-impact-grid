@@ -23,8 +23,8 @@ function MccGridController($scope, $filter, RowModel) {
         }
       }));
 
-  // Set up a watch on whether we have both field orderings and
-  // all the row data ready so we can render the grid.
+  // Sets up a $watch to determine when to redraw the grid rows.
+  // Set watch on gridData.length.
   $scope.$watch(
       function () {
         var canRenderRows = $scope.gridData && $scope.gridData.length &&
@@ -34,10 +34,10 @@ function MccGridController($scope, $filter, RowModel) {
           return $scope.gridData.length;
         }
 
-        return false;
+        return 0;
       },
       angular.bind(this,
-          function (oldCanRenderRows, newCanRenderRows) {
+          function (newCanRenderRows, oldCanRenderRows) {
             if (newCanRenderRows) {
               this.buildTableRows_(
                   $scope.gridData, this.flattenedColumns_, $scope.config.row);
