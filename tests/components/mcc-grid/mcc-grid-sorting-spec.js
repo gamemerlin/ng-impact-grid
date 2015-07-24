@@ -154,13 +154,89 @@ describe('Grid sorting', function() {
     });
   });
 
-  xdescribe('with pagination', function() {
+  describe('with pagination', function() {
     it('should sort ascending with pagination', function() {
-      expect(true).toBe(false);
+      $scope.gridConfig.pagination = {
+        perPageSizes: [2, 5, 10]
+      };
+
+      $scope.gridConfig.columns[0].isSortable = true;
+
+      element = $compile(HTML_TEMPLATE)($scope);
+      $scope.$digest();
+
+      var ths = $('thead th', element);
+      var paginator = $('.mcc-grid-pagination', element);
+
+      var expectedAscending = sortByField($scope.gridData, 'name', true);
+
+      ths.eq(0).click();
+
+      var rowsElm = $('tbody tr', element);
+
+      expect(rowsElm.length).toBe(2);
+
+      expect(rowsElm.eq(0).find('td').eq(0).text().trim()).toBe(expectedAscending[0].name);
+      expect(rowsElm.eq(1).find('td').eq(0).text().trim()).toBe(expectedAscending[1].name);
+
+      // Expect page 3 to be valid.
+      $('.controls input', paginator).val(3);
+      $('.controls input', paginator).trigger('change');
+      rowsElm = $('tbody tr', element);
+
+      expect(rowsElm.eq(0).find('td').eq(0).text().trim()).toBe(expectedAscending[4].name);
+      expect(rowsElm.eq(1).find('td').eq(0).text().trim()).toBe(expectedAscending[5].name);
+
+      // Expect page 5 to be valid.
+      $('.controls input', paginator).val(5);
+      $('.controls input', paginator).trigger('change');
+      rowsElm = $('tbody tr', element);
+
+      expect(rowsElm.eq(0).find('td').eq(0).text().trim()).toBe(expectedAscending[8].name);
+      expect(rowsElm.eq(1).find('td').eq(0).text().trim()).toBe(expectedAscending[9].name);
+
     });
 
     it('should sort decending with pagination', function() {
-      expect(true).toBe(false);
+      $scope.gridConfig.pagination = {
+        perPageSizes: [2, 5, 10]
+      };
+
+      $scope.gridConfig.columns[0].isSortable = true;
+
+      element = $compile(HTML_TEMPLATE)($scope);
+      $scope.$digest();
+
+      var ths = $('thead th', element);
+      var paginator = $('.mcc-grid-pagination', element);
+
+      var expectedDecending = sortByField($scope.gridData, 'name', false);
+
+      ths.eq(0).click();
+      ths.eq(0).click();
+
+      var rowsElm = $('tbody tr', element);
+
+      expect(rowsElm.length).toBe(2);
+
+      expect(rowsElm.eq(0).find('td').eq(0).text().trim()).toBe(expectedDecending[0].name);
+      expect(rowsElm.eq(1).find('td').eq(0).text().trim()).toBe(expectedDecending[1].name);
+
+      // Expect page 3 to be valid.
+      $('.controls input', paginator).val(3);
+      $('.controls input', paginator).trigger('change');
+      rowsElm = $('tbody tr', element);
+
+      expect(rowsElm.eq(0).find('td').eq(0).text().trim()).toBe(expectedDecending[4].name);
+      expect(rowsElm.eq(1).find('td').eq(0).text().trim()).toBe(expectedDecending[5].name);
+
+      // Expect page 5 to be valid.
+      $('.controls input', paginator).val(5);
+      $('.controls input', paginator).trigger('change');
+      rowsElm = $('tbody tr', element);
+
+      expect(rowsElm.eq(0).find('td').eq(0).text().trim()).toBe(expectedDecending[8].name);
+      expect(rowsElm.eq(1).find('td').eq(0).text().trim()).toBe(expectedDecending[9].name);
     });
   });
 });
