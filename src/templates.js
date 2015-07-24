@@ -64,7 +64,7 @@ module.run(['$templateCache', function($templateCache) {
     '      <span class="ng-binding">Per page</span>\n' +
     '      <ul>\n' +
     '        <li ng-repeat="pageLength in PaginationCtrl.getPerPageSizes()">\n' +
-    '          <a href="" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="PaginationCtrl.setPageSize(pageLength)">{{ pageLength }}</a>\n' +
+    '          <a href="" ng-class="{selected: PaginationCtrl.isPageSelected(pageLength)}" ng-click="PaginationCtrl.setPageSize(pageLength)">{{ pageLength }}</a>\n' +
     '        </li>\n' +
     '      </ul>\n' +
     '    </div>\n' +
@@ -81,7 +81,7 @@ module.run(['$templateCache', function($templateCache) {
     '      </li>\n' +
     '      <li class="counter">\n' +
     '        <form ng-submit="inputPage()">\n' +
-    '          <input ng-model="PaginationCtrl.getState().page" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span>\n' +
+    '          <input ng-model="PaginationCtrl.getState().page"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span>\n' +
     '        </form>\n' +
     '      </li>\n' +
     '      <li>\n' +

@@ -88,10 +88,7 @@ angular.module('myApp.view1', ['ngRoute'])
       isSticky: true
     },
     pagination: {
-      page: 1,
-      perPageSizes: [5, 10, 25, 50, 100],
-      perPage: 5,
-      totalCount: 12
+      perPageSizes: [5, 10, 25, 50, 100]
     },
     row: {
       rowApi: {

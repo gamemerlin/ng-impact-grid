@@ -1,6 +1,7 @@
 'use strict';
 
 describe('Grid layout', function() {
+  var element;
   var $compile;
   var $scope;
 
@@ -16,13 +17,19 @@ describe('Grid layout', function() {
     $scope.gridConfig = angular.copy(MOCK_CONFIG);
   }));
 
+  afterEach(function() {
+    if (element) {
+      element.remove();
+    }
+  });
+
   var HTML_TEMPLATE = '<mcc-grid ' +
       'data-grid-data="gridData" data-config="gridConfig"></mcc-grid>';
 
   describe('Mcc grid bindings and basic rendering', function(){
     describe('rendering the header', function() {
       it('should render a header', function() {
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var header = $('.mcc-grid-header', element);
@@ -83,7 +90,7 @@ describe('Grid layout', function() {
 
         $scope.gridConfig = testConfig;
 
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var header = $('.mcc-grid-header', element);
@@ -114,7 +121,7 @@ describe('Grid layout', function() {
       it('should render a header with grouped columns', function() {
         $scope.gridConfig = MOCK_CONFIG_GROUPED_HEADER;
 
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var header = $('.mcc-grid-header', element);
@@ -160,7 +167,7 @@ describe('Grid layout', function() {
     describe('rendering the table body', function() {
       it('should bind to the data passed to the row', function() {
 
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var rowsElm = $('tbody tr', element);
@@ -221,7 +228,7 @@ describe('Grid layout', function() {
 
         $scope.gridConfig = testConfig;
 
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var rowsElm = $('tbody tr', element);
@@ -252,7 +259,7 @@ describe('Grid layout', function() {
       it('should render a body with grouped headers', function() {
         $scope.gridConfig = MOCK_CONFIG_GROUPED_HEADER;
 
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var rowsElm = $('tbody tr', element);
@@ -298,7 +305,7 @@ describe('Grid layout', function() {
           }
         });
 
-        var element = $compile(HTML_TEMPLATE)($scope);
+        element = $compile(HTML_TEMPLATE)($scope);
         $scope.$digest();
 
         var rowsElm = $('tbody tr', element);

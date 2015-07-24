@@ -1,6 +1,7 @@
 'use strict';
 
 describe('Grid custom cell template', function() {
+  var element;
   var $compile;
   var $scope;
 
@@ -16,6 +17,12 @@ describe('Grid custom cell template', function() {
     $scope.gridConfig = angular.copy(MOCK_CONFIG);
   }));
 
+  afterEach(function() {
+    if (element) {
+      element.remove();
+    }
+  });
+
   var HTML_TEMPLATE = '<mcc-grid ' +
       'data-grid-data="gridData" data-config="gridConfig"></mcc-grid>';
 
@@ -24,8 +31,7 @@ describe('Grid custom cell template', function() {
 
     telephoneColumnDef.template = '<input ng-model="cell.value">';
 
-    var element = $compile(HTML_TEMPLATE)($scope);
-    $('body').append(element);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
     var rowsElm = $('tbody tr', element);

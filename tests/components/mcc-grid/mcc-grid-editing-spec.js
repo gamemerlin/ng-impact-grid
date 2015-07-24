@@ -1,6 +1,7 @@
 'use strict';
 
 describe('Grid edit and save', function() {
+  var element;
   var $compile;
   var $scope;
 
@@ -16,6 +17,12 @@ describe('Grid edit and save', function() {
     $scope.gridConfig = angular.copy(MOCK_CONFIG);
   }));
 
+  afterEach(function() {
+    if (element) {
+      element.remove();
+    }
+  });
+
   var HTML_TEMPLATE = '<mcc-grid ' +
       'data-grid-data="gridData" data-config="gridConfig"></mcc-grid>';
 
@@ -24,7 +31,7 @@ describe('Grid edit and save', function() {
 
     telephoneColumnDef.template = '<input ng-model="cell.value">';
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
 
     $scope.$digest();
 
@@ -54,8 +61,7 @@ describe('Grid edit and save', function() {
 
     telephoneColumnDef.template = '<input ng-model="cell.value" ng-blur="cell.save()">';
 
-    var element = $compile(HTML_TEMPLATE)($scope);
-    $('body').append(element);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
     var rowsElm = $('tbody tr', element);
@@ -83,7 +89,7 @@ describe('Grid edit and save', function() {
 
     telephoneColumnDef.template = '<input ng-model="cell.value" ng-focus="cell.isEditPending=true" ng-blur="cell.getRow().save()">';
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
 
     $scope.$digest();
 
@@ -115,7 +121,7 @@ describe('Grid edit and save', function() {
     telephoneColumnDef.template = '<input ng-model="cell.value" ' +
         'ng-focus="cell.isEditPending=false" ng-blur="cell.getRow().save()">';
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
 
     $scope.$digest();
 
@@ -148,7 +154,7 @@ describe('Grid edit and save', function() {
     telephoneColumnDef.template = '<input ng-model="cell.value" ' +
         'ng-change="cell.isEditPending=true;cell.getRow().isEditPending=true">';
 
-    var element = $compile('<mcc-grid data-grid-data="gridData" ' +
+    element = $compile('<mcc-grid data-grid-data="gridData" ' +
         'data-grid-api="gridApi" data-config="gridConfig"></mcc-grid>')($scope);
 
     $scope.$digest();
@@ -189,7 +195,7 @@ describe('Grid edit and save', function() {
     telephoneColumnDef.template = '<input ng-model="cell.value" ' +
         'ng-change="cell.isEditPending=true;cell.getRow().isEditPending=false">';
 
-    var element = $compile('<mcc-grid data-grid-data="gridData" ' +
+    element = $compile('<mcc-grid data-grid-data="gridData" ' +
         'data-grid-api="gridApi" data-config="gridConfig"></mcc-grid>')($scope);
 
     $scope.$digest();

@@ -14,6 +14,25 @@ mccGridModule.directive('mccGridFooter', function() {
           this.updatePagingationState_();
           deregisterStateWatch();
         }));
+
+    // Todo clean this up.
+    function isNormalInteger(str) {
+      return /^\+?(0|[1-9]\d*)$/.test(str);
+    }
+
+    this.scope_.$watch(
+      'PaginationCtrl.getState().page',
+      angular.bind(this, function(newVal, oldVal) {
+        if (!isNormalInteger(newVal)) {
+          $scope.PaginationCtrl.getState().page =
+              isNormalInteger(oldVal) ? oldVal : 1;
+        }
+
+        $scope.PaginationCtrl.getState().page =
+            Math.min($scope.PaginationCtrl.getState().page, this.getTotalPages());
+        $scope.PaginationCtrl.getState().page =
+            Math.max($scope.PaginationCtrl.getState().page, 1);
+    }));
   }
   MccGridPaginationController.$inject = ['$scope'];
 
@@ -96,6 +115,10 @@ mccGridModule.directive('mccGridFooter', function() {
 
     config.prevPage = Math.max(newPrev, 1);
     config.nextPage = Math.min(newNext, config.totalPages);
+  };
+
+  MccGridPaginationController.prototype.isPageSelected = function(pageLength) {
+    return this.getState().perPage === pageLength;
   };
 
   MccGridPaginationController.prototype.gotoFirstPage = function() {

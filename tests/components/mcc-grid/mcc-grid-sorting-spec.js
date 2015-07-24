@@ -1,6 +1,7 @@
 'use strict';
 
 describe('Grid sorting', function() {
+  var element;
   var $compile;
   var $scope;
 
@@ -15,6 +16,13 @@ describe('Grid sorting', function() {
     $scope.gridData = angular.copy(MOCK_DATA);
     $scope.gridConfig = angular.copy(MOCK_CONFIG);
   }));
+
+  afterEach(function(){
+    // Clean up this page.
+    if (element) {
+      element.remove();
+    }
+  });
 
   var HTML_TEMPLATE = '<mcc-grid ' +
       'data-grid-data="gridData" data-config="gridConfig"></mcc-grid>';
@@ -34,7 +42,7 @@ describe('Grid sorting', function() {
     // Set name column as sortable
     $scope.gridConfig.columns[0].isSortable = true;
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
     var ths = $('thead th', element);
@@ -54,7 +62,7 @@ describe('Grid sorting', function() {
     // Set name column as sortable
     $scope.gridConfig.columns[0].isSortable = true;
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
     var ths = $('thead th', element);
@@ -78,7 +86,7 @@ describe('Grid sorting', function() {
     // Mark phone sortable.
     $scope.gridConfig.columns[1].isSortable = true;
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
     var ths = $('thead th', element);
@@ -100,7 +108,7 @@ describe('Grid sorting', function() {
 
     $scope.gridConfig.columns[2].columns[0].isSortable = true;
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
         // Get the header for telephone, 2nd row, first column.
@@ -122,7 +130,7 @@ describe('Grid sorting', function() {
 
     $scope.gridConfig.columns[2].columns[0].isSortable = true;
 
-    var element = $compile(HTML_TEMPLATE)($scope);
+    element = $compile(HTML_TEMPLATE)($scope);
     $scope.$digest();
 
     // Get the header for telephone, 2nd row, first column.

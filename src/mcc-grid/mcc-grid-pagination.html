@@ -7,7 +7,7 @@
       <span class="ng-binding">Per page</span>
       <ul>
         <li ng-repeat="pageLength in PaginationCtrl.getPerPageSizes()">
-          <a href="" ng-class="{selected: isPerPageSelected(pageLength)}" ng-click="PaginationCtrl.setPageSize(pageLength)">{{ pageLength }}</a>
+          <a href="" ng-class="{selected: PaginationCtrl.isPageSelected(pageLength)}" ng-click="PaginationCtrl.setPageSize(pageLength)">{{ pageLength }}</a>
         </li>
       </ul>
     </div>
@@ -24,7 +24,7 @@
       </li>
       <li class="counter">
         <form ng-submit="inputPage()">
-          <input ng-model="PaginationCtrl.getState().page" maxlength="1"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span>
+          <input ng-model="PaginationCtrl.getState().page"> <span class="ng-binding">of</span> <span class="total-pages" ng-bind="PaginationCtrl.getTotalPages()"></span>
         </form>
       </li>
       <li>

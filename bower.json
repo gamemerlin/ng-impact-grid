@@ -27,7 +27,6 @@
     "angular-loader": "~1.4.0",
     "angular-mocks": "~1.4.0",
     "html5-boilerplate": "~5.2.0",
-    "jquery": "~1.8",
-    "ng-impact-grid": "git@github.com:gamemerlin/ng-impact-grid.git"
+    "jquery": "~1.8"
   }
 }
