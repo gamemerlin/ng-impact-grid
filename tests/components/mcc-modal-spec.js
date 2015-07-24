@@ -215,6 +215,21 @@ describe('Grid layout', function() {
 
         expect($scope.testValue).toEqual('123');
       });
+
+      it('should close a modal when press ESC', function() {
+        $scope.testDialog = new MccDialog(MOCK_CONFIG, $scope);
+        $scope.$apply();
+
+        $scope.testDialog.show();
+        $scope.$apply();
+        expect($('.mcc-modal').hasClass('in')).toBe(true);
+
+        var testEvent = $.Event('keyup', { which: 27 });
+        $('body').trigger(testEvent);
+
+        expect($('.mcc-modal').hasClass('in')).toBe(false);
+      });
+
     })
   });
 });
