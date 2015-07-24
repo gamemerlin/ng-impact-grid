@@ -229,7 +229,6 @@ describe('Grid layout', function() {
 
         expect($('.mcc-modal').hasClass('in')).toBe(false);
       });
-
     })
   });
 });
