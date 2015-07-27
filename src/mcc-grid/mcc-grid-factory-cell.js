@@ -27,6 +27,16 @@ mccGridModule.factory('CellModel', function(){
     if (columnDef.field.setter) {
       this.setValue = columnDef.field.setter;
     }
+
+    if (columnDef && columnDef.cellApi) {
+      // Execute a function decorator.
+      if (typeof columnDef.cellApi === 'function') {
+        columnDef.cellApi(this);
+        angular.extend(Cell.prototype, columnDef.cellApi.prototype);
+      } else {
+        angular.extend(Cell.prototype, columnDef.cellApi);
+      }
+    }
   }
 
   /**

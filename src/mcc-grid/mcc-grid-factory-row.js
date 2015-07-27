@@ -19,7 +19,13 @@ mccGridModule.factory('RowModel', ['CellModel', function (Cell) {
     this.isEditPending = false;
 
     if (rowConfig && rowConfig.rowApi) {
-      angular.extend(this, rowConfig.rowApi);
+      // Execute a function decorator.
+      if (typeof rowConfig.rowApi === 'function') {
+        rowConfig.rowApi(this);
+        angular.extend(Row.prototype, rowConfig.rowApi.prototype);
+      } else {
+        angular.extend(Row.prototype, rowConfig.rowApi);
+      }
     }
 
     for (var i = 0, length = flattenedColumns.length; i < length; i++) {

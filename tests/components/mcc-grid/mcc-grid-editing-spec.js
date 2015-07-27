@@ -86,8 +86,12 @@ describe('Grid edit and save', function() {
 
   it('should save using a row save api', function() {
     var telephoneColumnDef = $scope.gridConfig.columns[1];
-
-    telephoneColumnDef.template = '<input ng-model="cell.value" ng-focus="cell.isEditPending=true" ng-blur="cell.getRow().save()">';
+    telephoneColumnDef.cellApi = {
+      startEdit: function() {
+        this.isEditPending = true;
+      }
+    };
+    telephoneColumnDef.template = '<input ng-model="cell.value" ng-change="cell.startEdit()" ng-click="row.save()">';
 
     element = $compile(HTML_TEMPLATE)($scope);
 
@@ -104,11 +108,9 @@ describe('Grid edit and save', function() {
 
       telephoneInput.val(oldValue + ' updated');
       telephoneInput.trigger('change');
-      telephoneInput.trigger('focus');
 
       expect($scope.gridData[i]['telephone']).toBe(oldValue);
-
-      telephoneInput.trigger('blur');
+      telephoneInput.trigger('click');
 
       expect($scope.gridData[i]['telephone']).toBe(oldValue + ' updated');
     }
