@@ -15,7 +15,7 @@ gulp.task('sass', function () {
 });
 
 gulp.task('html2js', function() {
-  gulp.src("src/**/*.html")
+  gulp.src("src/mcc-grid/*.html")
       .pipe(ngHtml2Js({
         moduleName: "mcc.directives.templates",
         prefix: "templates/"
@@ -34,7 +34,7 @@ gulp.task('dist', function() {
         'src/modules.js',
         'src/templates.js',
         'src/mcc-grid/**/*.js',
-        'src/mcc-modal/**/*.js',
+        //'src/mcc-modal/**/*.js',
         'dist-suffix.js'])
       .pipe(gConcat('mcc-components.js'))
       .pipe(gulp.dest('./dist/'));
