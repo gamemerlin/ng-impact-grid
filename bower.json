@@ -21,7 +21,7 @@
   ],
   "homepage": "https://github.com/gamemerlin/ng-impact-grid",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "angular": "~1.4.0",
     "angular-route": "~1.4.0",
     "angular-loader": "~1.4.0",
