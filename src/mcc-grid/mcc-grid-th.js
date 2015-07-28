@@ -69,7 +69,7 @@ mccGridModule.directive('mccGridTh', ['$compile', function($compile) {
       var defaultThTemplate = '<span ng-bind="thCol.title"></span>',
           thContent = scope.thCol.thTemplate || defaultThTemplate;
 
-      element.empty().append($compile(thContent)(scope));
+      element.append($compile(thContent)(scope));
     }
   }
 }]);
