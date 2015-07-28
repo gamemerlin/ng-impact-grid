@@ -1,6 +1,6 @@
 var mccGridModule = angular.module('mcc.directives.grid');
 
-mccGridModule.directive('mccGridTh', function() {
+mccGridModule.directive('mccGridTh', ['$compile', function($compile) {
   function MccThController($scope) {
     this.scope_ = $scope;
   }
@@ -9,11 +9,11 @@ mccGridModule.directive('mccGridTh', function() {
    * @param column - Column config model
    * @private
    */
-  MccThController.prototype.sortBy_ = function (column) {
-    column.isSortedAsc = !column.isSortedAsc;
+  MccThController.prototype.sortBy_ = function (thCol) {
+    thCol.isSortedAsc = !thCol.isSortedAsc;
 
     // Fire an event to the grid controller to execute.
-    this.scope_.$emit('sortColumn', column);
+    this.scope_.$emit('sortColumn', thCol);
   };
 
   /**
@@ -22,16 +22,16 @@ mccGridModule.directive('mccGridTh', function() {
    * life-time of the grid, so set them on link and remove
    * from directive bindings.
    * @param element
-   * @param column
+   * @param thCol - this is a column def from the gridConfig's column array.
    * @private
    */
-  MccThController.prototype.setRowAndColSpans_ = function (element, column) {
-    if (column.rowSpan) {
-      element.attr('rowspan', column.rowSpan);
+  MccThController.prototype.setRowAndColSpans_ = function (element, thCol) {
+    if (thCol.rowSpan) {
+      element.attr('rowspan', thCol.rowSpan);
     }
 
-    if (column.colSpan) {
-      element.attr('colspan', column.colSpan);
+    if (thCol.colSpan) {
+      element.attr('colspan', thCol.colSpan);
     }
   };
 
@@ -44,9 +44,9 @@ mccGridModule.directive('mccGridTh', function() {
     controllerAs: 'ThCtrl',
     link: function(scope, element, attrs) {
       // Set row and colspan
-      scope.ThCtrl.setRowAndColSpans_(element, scope.column);
+      scope.ThCtrl.setRowAndColSpans_(element, scope.thCol);
 
-      var cssConfigs = scope.column.css;
+      var cssConfigs = scope.thCol.css;
 
       if (cssConfigs) {
         if (cssConfigs.header && cssConfigs.header.length) {
@@ -59,12 +59,17 @@ mccGridModule.directive('mccGridTh', function() {
       }
 
       // Hook up column sorting if available.
-      if (scope.column && scope.column.isSortable) {
+      if (scope.thCol && scope.thCol.isSortable) {
         element.bind('click', function() {
-          scope.ThCtrl.sortBy_(scope.column);
+          scope.ThCtrl.sortBy_(scope.thCol);
           scope.$apply();
         });
       }
+
+      var defaultThTemplate = '<span ng-bind="thCol.title"></span>',
+          thContent = scope.thCol.thTemplate || defaultThTemplate;
+
+      element.empty().append($compile(thContent)(scope));
     }
   }
-});
+}]);

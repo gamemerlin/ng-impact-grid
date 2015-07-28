@@ -159,6 +159,13 @@ MccGridController.prototype.save = function() {
 };
 
 /**
+ * @returns The immediate parent scope of this directive.
+ */
+MccGridController.prototype.getAppScope = function() {
+  return this.scope_.$parent;
+};
+
+/**
  * @returns {Array}
  *      The list of rows to bind to. These rows are Row object
  *      wrappers around the grid data.

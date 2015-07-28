@@ -3,15 +3,11 @@
      to be replace in templates :( -->
 <thead>
   <tr>
-      <th ng-repeat="column in HeaderCtrl.firstHeaderRow"
-          class="mcc-grid-th"
-          data-column="column">
-        {{ column.title }}
-      </th>
+      <th ng-repeat="thCol in HeaderCtrl.firstHeaderRow"
+          class="mcc-grid-th"></th>
   </tr>
   <tr ng-if="HeaderCtrl.hasGroupedColumns">
      <th class="mcc-grid-th"
-         ng-repeat="column in HeaderCtrl.secondHeaderRow"
-         data-column="column">{{ column.title }}</th>
+         ng-repeat="thCol in HeaderCtrl.secondHeaderRow"></th>
   </tr>
 </thead>

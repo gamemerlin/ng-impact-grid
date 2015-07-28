@@ -165,6 +165,20 @@ Example usage:
       <td>Whether this column is sortable.</td>
     </tr>
     <tr>
+        <td>template</td>
+        <td>No</td>
+        <td>String</td>
+        <td>A custom template for tbody td elements. Used to pass in costom renderers and should bind to the <b>thCol</b> model.</td>
+      </tr>
+    </tbody>
+    <tr>
+        <td>thTemplate</td>
+        <td>No</td>
+        <td>String</td>
+        <td>A custom template for thead th elements. Used to pass in costom renderers and should bind to the <b>th</b> model.</td>
+      </tr>
+    </tbody>
+    <tr>
       <td>title</td>
       <td>No</td>
       <td>String</td>

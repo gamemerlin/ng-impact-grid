@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var gutil = require('gulp-util');
+var clean = require('gulp-clean');
 var gConcat = require('gulp-concat');
 var ngHtml2Js = require("gulp-ng-html2js");
 
@@ -14,13 +14,24 @@ gulp.task('sass', function () {
       .pipe(gulp.dest('dist'));
 });
 
+gulp.task('clean-template', function () {
+  return gulp
+      .src(
+        [
+          'src/templates.js',
+          'temp/templates/**/*.js'
+        ],
+        {force: true})
+      .pipe(clean());
+});
+
 gulp.task('html2js', function() {
-  gulp.src("src/mcc-grid/*.html")
+  gulp.src('src/mcc-grid/**/*.html')
       .pipe(ngHtml2Js({
-        moduleName: "mcc.directives.templates",
-        prefix: "templates/"
+        moduleName: 'mcc.directives.templates',
+        prefix: "templates/mcc-grid/"
       }))
-      .pipe(gulp.dest("temp/templates"));
+      .pipe(gulp.dest('temp/templates'));
 
   gulp.src('temp/**/*.js')
       .pipe(gConcat('templates.js'))
@@ -40,4 +51,4 @@ gulp.task('dist', function() {
       .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('default', ['sass', 'html2js', 'dist']);
+gulp.task('default', ['sass', 'clean-template', 'html2js', 'dist']);
