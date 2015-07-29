@@ -155,6 +155,9 @@ MccGridHeaderController.prototype.handleWindowScrollForStickyHeaders_ = function
   }
 };
 
+// Export header controller for reuse.
+mccGridModule.controller('MccGridHeaderController', MccGridHeaderController);
+
 mccGridModule.directive('mccGridHeader', function () {
   return {
     restrict: 'C',

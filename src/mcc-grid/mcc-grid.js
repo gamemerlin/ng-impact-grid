@@ -195,6 +195,9 @@ MccGridController.prototype.sortColumnBy_ = function (event, column) {
       !column.isSortedAsc);
 };
 
+// Export the controller as a named controller for re-use.
+mccGridModule.controller('MccGridController', MccGridController);
+
 mccGridModule.directive('mccGrid', function () {
   return {
     restrict: 'E',
@@ -205,7 +208,7 @@ mccGridModule.directive('mccGrid', function () {
     },
     templateUrl: 'templates/mcc-grid/mcc-grid.html',
     replace: true,
-    controller: MccGridController,
+    controller: 'MccGridController',
     controllerAs: 'GridCtrl',
     link: function(scope, element, attrs, ctrl) {
       // Export this controller.
