@@ -104,7 +104,7 @@ angular.module('myApp.view1', ['ngRoute'])
     },
     table: {
       autoHeightResize: false,
-      autoHeightResizeWithoutWindowScroll: false,
+      autoHeightResizeWithoutWindowScroll: true,
       canScrollX: false,
       canScrollY: true,
       bodyHeight: 100

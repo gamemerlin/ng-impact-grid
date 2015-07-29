@@ -67,7 +67,8 @@ MccGridBodyController.prototype.bindWindowResizeForAutoHeight_ =
     angular.element(this.document_).find('body').css('overflow-y', 'hidden');
   }
 
-  var tableBodyContainer = angular.element(this.element_);
+  var tableBodyContainer = angular.element(this.element_),
+      footerContainer = tableBodyContainer.next();
 
   angular.element(this.window_).bind('resize', angular.bind(
       this,
@@ -75,9 +76,9 @@ MccGridBodyController.prototype.bindWindowResizeForAutoHeight_ =
         var windowScrollTop = window.pageYOffset ? window.pageYOffset : document.body.scrollTop;
 
         var positionRelativeToWindow = this.domUtils_.getOffsetFor(tableBodyContainer) - windowScrollTop,
-            newBodyHeight = this.window_.innerHeight - positionRelativeToWindow;
-
-        tableBodyContainer.css('height', newBodyHeight + 'px');
+            newBodyHeight = this.window_.innerHeight - positionRelativeToWindow,
+            footerHeight = footerContainer.length ? footerContainer[0].offsetHeight : 0;
+        tableBodyContainer.css('height', newBodyHeight - footerHeight + 'px');
       }));
 
   // Some edge cases load this table via ajax and makes
